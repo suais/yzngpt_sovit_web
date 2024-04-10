@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <title>振南知波语音在线合成平台</title>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-block">
+            <div class="title">振南知波语音在线合成平台(主播工具)</div>
+        </div>
+        <div class="middle-block">
+            <div class="left">
+                <p>振南声音模型生成部分（输入框中的内容将由GPT生成）</p>
+                <div>
+                    <textarea rows="10" placeholder="在这里输入文本" id="text"></textarea>
+                    <button class="clear" id="clear">清空输入</button>
+                    <div class="sund-content-select"> 
+                        <label for="sound">选择声音内容:</label>
+                        <select id="sound" name="sound">
+                            <option value="0">0.[输入文字]</option>
+                            <option value="1">1.[输入GPT生成用户名]问候</option>
+                            <option value="2">2.[输入AI生成名字]引导提问</option>
+                            <option value="3">3.[输入AI生成名字]打招呼</option>
+                            <option value="4">4.[输入]RTOS和高手C课程进一步介绍</option>
+                            <option value="5">5.[输入]RTOS是全网更低门槛课程有门槛学高手C课程</option>
+                            <option value="6">6.[输入]RTOS课程郭天祥经典</option>
+                            <option value="7">7.[输入]告诉大家振南一直在线答疑</option>
+                            <option value="8">8.[输入]学RTOS之前建议先学高手C</option>
+                            <option value="9">9.[输入]学习课程的重要性</option>
+                            <option value="10">10.[输入]希望我的知识可以帮到大家</option>
+                            <option value="11">11.[输入]引导下单+联系客服</option>
+                            <option value="12">12.[输入]引导多来直播间问问题</option>
+                            <option value="13">13.[输入]引导领内部资料</option>
+                            <option value="14">14.[输入]课程中的经验你在别的课程学不到</option>
+                            <option value="15">15.[输入]课程介绍+让大家留问题振南答疑</option>
+                        </select>
+                    </div>
+
+                    <div class="info">
+                        <div class="file-info">
+                            <div>
+                                <p>生成文件名:</p>
+                                <p class="file-name-result" id="file-name-result"> </p>
+                            </div>
+                        </div>
+    
+                        <div class="file-info">
+                            <div>
+                                <p>生成文件时间戳:</p>
+                                <p class="file-time-result"> </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                <div class="play-audio">
+                    <button class="btn-play" id="local-play">本地播放</button>
+                    <button class="btn-play" id="server-play">主机播放</button>
+                </div>
+                
+                </div>
+            </div>
+            <div class="right">
+                <button class="custom-button" id="btn-getvoice">
+                    一键生成
+                </button>
+            </div>
+
+        </div>
+        <div class="bottom-block">
+            <a href="https://www.znmcu.com">wwww.znmcu.com</a>     
+        </div>
+    </div>
+    <script> 
+        var audio_path = '';
+        document.getElementById('btn-getvoice').addEventListener('click', function() {
+            var get_sound_value = document.getElementById('sound').value;
+            var text = document.getElementById('text').value;
+
+            var textparameter = 'text=' + text; // 传递的参数
+            var selectparameter = '&select=' + get_sound_value; // 传递的参数
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/getmsg?' + textparameter + selectparameter, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        console.log(xhr.responseText);
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            var response = JSON.parse(xhr.responseText);
+                            audio_path = response.data;
+                            document.getElementById("file-name-result").innerText = audio_path;
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                }
+            };
+            xhr.send();
+        });
+
+        document.getElementById('server-play').addEventListener('click', function() {
+            alert("点击确认开始播放")
+            var sound = '?sound=' + audio_path; // 传递的参数
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/serverplay' + sound, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        console.log(xhr.responseText);
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.msg == 'ok') {
+                                alert("远程播放完成")
+                            }
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                }
+            };
+            xhr.send();
+        });
+
+        document.getElementById('local-play').addEventListener('click', function() {
+            alert("点击确认开始播放")
+            var audio = new Audio('/api/localplay' + '/' + audio_path);
+            audio.addEventListener('canplaythrough', function() {
+                audio.play();
+            });
+            audio.load();
+        });
+
+        document.getElementById('clear').addEventListener('click', function() {
+            var text = document.getElementById('text').value;
+            text = ""
+            document.getElementById('text').value = text;
+        });
+    </script>
+</body>
+</html>
