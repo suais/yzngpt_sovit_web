@@ -104,7 +104,7 @@
 
         document.getElementById('server-play').addEventListener('click', function() {
             alert("点击确认开始播放")
-            var sound = '?sound=' + audio_path; // 传递的参数
+            var sound = '?sound=' + audio_path;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/serverplay' + sound, true);
             xhr.onreadystatechange = function() {
@@ -113,7 +113,7 @@
                         console.log(xhr.responseText);
                         if (xhr.status >= 200 && xhr.status < 300) {
                             var response = JSON.parse(xhr.responseText);
-                            if (response.msg == 'ok') {
+                            if (response.msg == 'ok') 
                                 alert("远程播放完成")
                             }
                         }
