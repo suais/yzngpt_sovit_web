@@ -5,7 +5,6 @@ import random
 import string
 import shutil
 
-
 def generate_random_name():
     length = random.randint(10, 20)
     name = ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
@@ -72,7 +71,6 @@ def api_process_return(text, select):
         sound2 = "data/"+ get_sound_path(select) 
         data['data'] = sync_sound(sound1, sound2)
     return data
-
 
 
 def api_server_play(filename):
