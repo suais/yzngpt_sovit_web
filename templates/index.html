@@ -3,84 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
     <title>振南知波语音在线合成平台</title>
 </head>
 <body>
+    
     <div class="container">
         <div class="top-block">
-            <div class="title">振南知波语音在线合成平台(主播工具)</div>
+            <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="logo" class="logo" />
+            <h1>ZN Voice</h1>
         </div>
         <div class="middle-block">
             <div class="left">
-                <p>振南声音模型生成部分（输入框中的内容将由GPT生成）</p>
+                <p class="tip-text">1.输入需要合成的语音文字</p>
                 <div>
-                    <textarea rows="10" placeholder="在这里输入文本" id="text"></textarea>
-                    <button class="clear" id="clear">清空输入</button>
+                    <textarea rows="4" placeholder="在这里输入文本" id="text"></textarea>
+                    <p class="btn-clear" id="clear">清空输入</p>
                     <div class="sund-content-select"> 
-                        <label for="sound">选择声音内容:</label>
-                        <select id="sound" name="sound">
-                            <option value="0">0.[输入文字]</option>
-                            <option value="1">1.[输入GPT生成用户名]问候</option>
-                            <option value="2">2.[输入AI生成名字]引导提问</option>
-                            <option value="3">3.[输入AI生成名字]打招呼</option>
-                            <option value="4">4.[输入]RTOS和高手C课程进一步介绍</option>
-                            <option value="5">5.[输入]RTOS是全网更低门槛课程有门槛学高手C课程</option>
-                            <option value="6">6.[输入]RTOS课程郭天祥经典</option>
-                            <option value="7">7.[输入]告诉大家振南一直在线答疑</option>
-                            <option value="8">8.[输入]学RTOS之前建议先学高手C</option>
-                            <option value="9">9.[输入]学习课程的重要性</option>
-                            <option value="10">10.[输入]希望我的知识可以帮到大家</option>
-                            <option value="11">11.[输入]引导下单+联系客服</option>
-                            <option value="12">12.[输入]引导多来直播间问问题</option>
-                            <option value="13">13.[输入]引导领内部资料</option>
-                            <option value="14">14.[输入]课程中的经验你在别的课程学不到</option>
-                            <option value="15">15.[输入]课程介绍+让大家留问题振南答疑</option>
+                        <p class="tip-text">2.选择关联音频:</p>
+                        <select id="sound" name="sound" class="select">
+                            <option value="0">[输入文字]</option>
+                            <option value="1">[输入GPT生成用户名]问候</option>
+                            <option value="2">[输入AI生成名字]引导提问</option>
+                            <option value="3">[输入AI生成名字]打招呼</option>
+                            <option value="4">[输入]RTOS和高手C课程进一步介绍</option>
+                            <option value="5">[输入]RTOS是全网更低门槛课程有门槛学高手C课程</option>
+                            <option value="6">[输入]RTOS课程郭天祥经典</option>
+                            <option value="7">[输入]告诉大家振南一直在线答疑</option>
+                            <option value="8">[输入]学RTOS之前建议先学高手C</option>
+                            <option value="9">[输入]学习课程的重要性</option>
+                            <option value="10">[输入]希望我的知识可以帮到大家</option>
+                            <option value="11">[输入]引导下单+联系客服</option>
+                            <option value="12">[输入]引导多来直播间问问题</option>
+                            <option value="13">[输入]引导领内部资料</option>
+                            <option value="14">[输入]课程中的经验你在别的课程学不到</option>
+                            <option value="15">[输入]课程介绍+让大家留问题振南答疑</option>
                         </select>
                     </div>
 
+                    <div class="sund-content-select"> 
+                        <p class="tip-text">3.选择音频模型:</p>
+                        <select id="model" name="model" class="select">
+                            <option value="0">振南老师</option>
+                            <option value="1">暂无其它</option>
+                        </select>
+                    </div>
+
+                    <button class="custom-button" id="btn-getvoice">合成语音</button>
+
+                    <p class="tip-text">4.合成结果:</p>
+                    
                     <div class="info">
                         <div class="file-info">
-                            <div>
-                                <p>生成文件名:</p>
-                                <p class="file-name-result" id="file-name-result"> </p>
+                            <div class="info-item"> 
+                                <p class="info-title padd">合成进度:</p>
+                                <div class="progress-bar">
+                                    <div class="progress" id="progress" style="width: 0;"></div>
+                                </div>
                             </div>
-                        </div>
-    
-                        <div class="file-info">
-                            <div>
-                                <p>生成文件时间戳:</p>
-                                <p class="file-time-result"> </p>
+
+                            <div class="info-item">
+                                <p class="info-title padd">生成文件名:</p>
+                                <p class="info-result" id="file-name-result">暂无音频</p>
+                            </div>
+
+                            <div class="info-item">
+                                <p class="info-title padd">时间:</p>
+                                <p class="info-result" id="file-time-result">暂无信息</p>
+                            </div>
+
+                            <div class="info-item">
+                                <p class="info-title padd">时长:</p>
+                                <p class="info-result" id="file-length">暂无信息</p>
+                            </div>
+
+                            <div class="info-item">
+                                <p class="info-title padd">文件大小:</p>
+                                <p class="info-result" id="file-size">暂无信息</p>
                             </div>
                         </div>
                     </div>
 
                 <div class="play-audio">
-                    <button class="btn-play" id="local-play">本地播放</button>
-                    <button class="btn-play" id="server-play">主机播放</button>
+                    <button class="btn-play" id="local-play">本地浏览器播放</button>
+                    <button class="btn-play" id="server-play">远程主机播放</button>
+                    <button class="btn-play" id="sos">一键呼叫振南</button>
                 </div>
                 
                 </div>
             </div>
             <div class="right">
-                <button class="custom-button" id="btn-getvoice">
-                    合成语音
-                </button>
-            </div>
+                <div class="account-area"> 
+                    <div class="account-info">
+                        <div class="account-title">账号信息</div>
+                        <div class="account-logout">退出登录</div>
+                    </div>
 
+                    <div class="account-info-text-line"> 
+                        <div class="info-item">
+                            <p class="info-title">UID:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-title">用户名:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-title">本次登录时间:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-title">在线时长:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statics-area"> 
+                    <div class="statics-info">
+                        <div class="statics-title">使用统计</div>
+                    </div>
+
+                    <div class="statics-info-text-line"> 
+                        <div class="info-item">
+                            <p class="info-title">今日合成次数:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-title">今日本地播放次数:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-title">今日远程播放次数:</p>
+                            <p class="info-result" id="file-size">暂无信息</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="reminder-area"> 
+                    <div class="reminder-info">
+                        <div class="reminder-title">提醒</div>
+                    </div>
+
+                    <div class="reminder-info-text-line"> 
+                        <div class="info-item">
+                            <p class="info-title">2024年13日21时19分:</p>
+                            <p class="info-result" id="file-size">暂无信息234234234</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div class="bottom-block">
-            <a href="https://www.znmcu.com">wwww.znmcu.com</a>     
-        </div>
+
+        <div class="bottom-block"></div>
+    
     </div>
     <script> 
         var audio_path = '';
         document.getElementById('btn-getvoice').addEventListener('click', function() {
             var get_sound_value = document.getElementById('sound').value;
             var text = document.getElementById('text').value;
+            var textparameter = 'text=' + text; 
+            var selectparameter = '&select=' + get_sound_value; 
 
-            var textparameter = 'text=' + text; // 传递的参数
-            var selectparameter = '&select=' + get_sound_value; // 传递的参数
+            if (text === '') {
+                // 弹窗提示
+                alert('输入框不能为空，请输入内容');
+                return ;
+            }
+
+            
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/getmsg?' + textparameter + selectparameter, true);
             xhr.onreadystatechange = function() {
@@ -90,7 +184,10 @@
                         if (xhr.status >= 200 && xhr.status < 300) {
                             var response = JSON.parse(xhr.responseText);
                             audio_path = response.data;
+                            audio_time = response.time;
                             document.getElementById("file-name-result").innerText = audio_path;
+                            document.getElementById("file-time-result").innerText = audio_time;
+                            console.log("合成完成")
                         }
                     } else {
                         console.log('请求失败');
@@ -101,7 +198,6 @@
         });
 
         document.getElementById('server-play').addEventListener('click', function() {
-            alert("点击确认开始播放")
             var sound = '?sound=' + audio_path;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/serverplay' + sound, true);
@@ -112,19 +208,17 @@
                         if (xhr.status >= 200 && xhr.status < 300) {
                             var response = JSON.parse(xhr.responseText);
                             if (response.msg == 'ok') 
-                                alert("远程播放完成")
+                                console.log("远程播放完成")
                             }
                         }
                     } else {
                         console.log('请求失败');
                     }
                 }
-            };
             xhr.send();
         });
 
         document.getElementById('local-play').addEventListener('click', function() {
-            alert("点击确认开始播放")
             var audio = new Audio('/api/localplay' + '/' + audio_path);
             audio.addEventListener('canplaythrough', function() {
                 audio.play();
@@ -137,6 +231,13 @@
             text = ""
             document.getElementById('text').value = text;
         });
+
+        function updateProgress(percent) {
+            document.getElementById('progress').style.width = percent + '%';
+        }
+
+        updateProgress(50); 
+
     </script>
 </body>
 </html>

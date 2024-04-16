@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+<title>ZN Voice 管理端</title>
+
+</head>
+<body>
+    
+    <div class="continer"> 
+        <div class="top-block">
+            <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="logo" class="logo" />
+            <h1>ZN Voice</h1>
+        </div>
+    
+        <div class="content"> 
+            <div id="sidebar" class="sidebar">
+                <h2 class="admin">Admin</h2>
+                <ul class="menu">
+                    <li>
+                        <a href="#statics" onclick="loadPage('/admin/userstatics')" id="userstatics">用户监控</a>
+                    </li>
+                    <li>
+                        <a href="#users" onclick="loadPage('admin/users')">账号管理</a>
+                    </li>
+                    <li>
+                        <a href="#record" onclick="loadPage('admin/record')">语音合成记录</a></li>
+                    <li>
+                        <a href="#voices" onclick="loadPage('admin/voices')">语音管理</a>
+                    </li>
+                    <li>
+                        <a href="#words" onclick="loadPage('admin/words')">敏感词管理</a>
+                    </li>
+                    <li>
+                        <a href="#sms" onclick="loadPage('admin/sms')">短信记录</a>
+                    </li>
+                    <li>
+                        <a href="#logs" onclick="loadPage('admin/logs')">日志</a>
+                    </li>
+                    <li>
+                        <a href="#logout" onclick="loadPage('logout')">退出</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="content">
+                暂无内容
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function loadPage(page) {
+            fetch(page)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('content').innerHTML = html;
+            })
+            .catch(error => console.error('页面加载失败', error));
+        }
+
+        const menuItems = document.querySelectorAll('.sidebar ul li');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        window.addEventListener('load', function() {
+            document.getElementById('userstatics').click();
+          });
+
+
+    </script>
+</body>
+</html>

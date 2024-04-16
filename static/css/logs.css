@@ -1,0 +1,19 @@
+.concontiner {
+    margin-top: 0px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+textarea {
+    margin-top: 20px;
+    width: 98%;
+    padding: 10px;
+    background-color: #F9F9F9;
+    border-radius: 5px;
+    border: 1px solid #497AF6;
+    font-size: 14px;
+    resize: none;
+}

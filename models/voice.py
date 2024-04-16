@@ -4,24 +4,32 @@ import requests
 import random
 import string
 import shutil
+import datetime
+
+cache_gpt_path = "cache/gpt/"
+cache_combined_path = "cache/combined/"
+file_format = ".wav"
+ori_sound_path = "data/"
+api_url = 'http://myserver.oxoooo.com:9880'
 
 def generate_random_name():
     length = random.randint(10, 20)
-    name = ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
-    return name
+    filename = ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
+    return filename
 
 def get_gpt_sovits(text):
-    url = 'http://myserver.oxoooo.com:9880/'
+    url = api_url
     params = {'text': text, 'text_language': 'zh'}
     response = requests.get(url, params=params)
     if response.status_code == 200:
         gpt_name = generate_random_name()
-        gpt_name_all = f'cache/gpt/{gpt_name}.wav'
+        gpt_name_all = f'{cache_gpt_path}{gpt_name}{file_format}'
         with open(gpt_name_all, 'wb') as f:
             f.write(response.content)
             print('文件下载完成')
         return gpt_name
     else:
+        print(response.status_code)
         print('文件下载失败')
         return None
 
@@ -30,9 +38,9 @@ def sync_sound(gpt_file, ori_file):
     sound2 = AudioSegment.from_wav(ori_file)
     combined = sound1 + sound2
     random_name = generate_random_name()
-    filename = f"cache/combined/{random_name}.wav"
+    filename = f"{cache_combined_path}{random_name}.wav"
     combined.export(filename, format="wav")
-    return f"{random_name}.wav"
+    return f"{random_name}{file_format}"
 
 def get_sound_path(num):
     data_sound = {
@@ -56,22 +64,22 @@ def get_sound_path(num):
     return data_sound[num]
 
 def api_process_return(text, select):
-    data = {
-        'msg': 'ok',
-        'data': '',
-    }        
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+    data = {}
+    data['msg'] = 'ok'
+    data['data'] = ''
+    data['time'] = formatted_time
     if select == "0":
         sound1 = get_gpt_sovits(text)
-        data['data'] = f"{sound1}.wav"
-        targetdir = "cache/combined/"
-        source_file = f"cache/gpt/{sound1}.wav"
-        shutil.move(source_file, targetdir)
+        data['data'] = f"{sound1}{file_format}"
+        source_file = f"{cache_gpt_path}{sound1}.wav"
+        shutil.move(source_file, cache_combined_path)
     else:
-        sound1 = "cache/gpt/"+ get_gpt_sovits(text) + '.wav'
-        sound2 = "data/"+ get_sound_path(select) 
+        sound1 = cache_gpt_path + get_gpt_sovits(text) + {file_format}
+        sound2 = ori_sound_path + get_sound_path(select) 
         data['data'] = sync_sound(sound1, sound2)
     return data
-
 
 def api_server_play(filename):
     try:

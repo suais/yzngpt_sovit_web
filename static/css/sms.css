@@ -1,0 +1,29 @@
+.concontiner {
+    margin-top: 0px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.smstable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.smstable th, .smstable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.smstable th {
+    background-color: #ffffff;
+}
+
+.smstable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}

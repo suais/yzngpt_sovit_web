@@ -1,0 +1,36 @@
+.concontiner {
+    margin-top: 0px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+textarea {
+    margin-top: 20px;
+    width: 98%;
+    padding: 10px;
+    background-color: #F9F9F9;
+    border-radius: 5px;
+    border: 1px solid #497AF6;
+    font-size: 14px;
+    resize: none;
+}
+
+.btn-save {
+    margin-top: 20px;
+    padding: 5px 20px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid #3498db;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+.btn-save:hover {
+    background-color: #2980b9;
+    color: #fff;
+}

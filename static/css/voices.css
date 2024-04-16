@@ -1,0 +1,46 @@
+.concontiner {
+    margin-top: 0px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.btn-newvoice {
+    margin-left: 20px;
+    padding: 5px 20px;
+    background-color: #3498db;
+    color: #fff;
+    font-size: 14px;
+    border: 1px solid #3498db;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+.btn-newvoice:hover {
+background-color: #2980b9;
+color: #fff;
+}
+
+.voicetable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.voicetable th, .voicetable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.voicetable th {
+    background-color: #ffffff;
+}
+
+.voicetable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
