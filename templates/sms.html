@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sms.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <title>ZN Voice Admin</title>
 </head>
 <body>
@@ -21,68 +22,79 @@
                 <th>短信内容</th>
             </tr>
     
+            {% for sms in respone.SMSs %}
             <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
+                <td data-id="{{sms.id}}">{{sms.id}}</td>
+                <td data-id="{{sms.id}}">{{sms.username}}</td>
+                <td data-id="{{sms.id}}">{{sms.phone}}</td>
+                <td data-id="{{sms.id}}">{{sms.create_at}}</td>
+                <td data-id="{{sms.id}}">{{sms.msg}}</td>
             </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
-            <tr> 
-                <td>100</td>
-                <td>小红</td>
-                <td>18745645444</td>
-                <td>2024年4月21日18时22分13秒</td>
-                <td>这是短信内容</td>
-            </tr>
-    
+            {% endfor %}
         </table>
+
+        <div class="pagination">
+            <button id="firstPage"  class="btn-page">首页</button>
+            <button id="prevPage" class="btn-page">上一页</button>
+            <span>当前页: <span id="currentPage">1</span></span>
+            <button id="nextPage" class="btn-page">下一页</button>
+            <input type="number" id="manualPage" min="1">
+            <button id="goToPage" class="btn-page">跳转</button>
+        </div>
+        
     </div>
 
    
 
     <script>
+        // 初始化当前页数
+        let currentPage = 1;
+
+        // 模拟加载数据的函数
+        function loadData(page) {
+            // 这里可以替换成真实的数据加载逻辑
+            console.log(currentPage);
+        }
+
+        // 加载初始页面数据
+        loadData(currentPage);
+
+        // 首页按钮点击事件
+        document.getElementById('firstPage').addEventListener('click', function() {
+            currentPage = 1;
+            document.getElementById('currentPage').innerText = currentPage;
+            //loadData(currentPage);
+            alert("点击首页");
+        });
+
+        // 上一页按钮点击事件
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (currentPage > 1) {
+            currentPage--;
+            document.getElementById('currentPage').innerText = currentPage;
+            //loadData(currentPage);
+            alert("点击上一页");
+            }
+        });
+
+        // 下一页按钮点击事件
+        document.getElementById('nextPage').addEventListener('click', function() {
+            currentPage++;
+            document.getElementById('currentPage').innerText = currentPage;
+            //loadData(currentPage);
+            alert("点击下一页");
+        });
+
+        // 跳转按钮点击事件
+        document.getElementById('goToPage').addEventListener('click', function() {
+            const inputPage = parseInt(document.getElementById('manualPage').value);
+            if (inputPage >= 1) {
+            currentPage = inputPage;
+            document.getElementById('currentPage').innerText = currentPage;
+            //loadData(currentPage);
+            alert("点击跳转页");
+            }
+        });
 
     </script>
 </body>

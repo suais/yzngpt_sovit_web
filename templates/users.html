@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/users.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <title>ZN Voice Admin</title>
 </head>
 <body>
@@ -18,55 +19,109 @@
                 <th>UID</th>
                 <th>用户名</th>
                 <th>电子邮箱</th>
-                <th>上次登录</th>
+                <th>最后登录时间</th>
                 <th>操作</th>
             </tr>
 
+            {% for user in respone.users %}
             <tr>
-                <td>1000000</td>
-                <td>小红</td>
-                <td>zn@example.com</td>
-                <td>2024年4月21日18时22分</td>
+                <td data-id="{{user.uid}}">{{user.uid}}</td>
+                <td data-id="{{user.uid}}">{{user.username}}</td>
+                <td data-id="{{user.uid}}">{{user.email}}</td>
+                <td data-id="{{user.uid}}">{{user.last_login}}</td>
                 <td>
-                    <button>更多</button>
+                    <button class="btn-more" data-id="{{user.uid}}">更多</button>
                 </td>
             </tr>
-
-            <tr>
-                <td>1000000</td>
-                <td>小红</td>
-                <td>zn@example.com</td>
-                <td>2024年4月21日18时22分</td>
-                <td>
-                    <button>更多</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>1000000</td>
-                <td>小红</td>
-                <td>zn@example.com</td>
-                <td>2024年4月21日18时22分</td>
-                <td>
-                    <button>更多</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>1000000</td>
-                <td>小红</td>
-                <td>zn@example.com</td>
-                <td>2024年4月21日18时22分</td>
-                <td>
-                    <button>更多</button>
-                </td>
-            </tr>
-
+            {% endfor %}
         </table>
 
-    </div>
-    <script>
+        <div class="pagination">
+            <button id="firstPage"  class="btn-page">首页</button>
+            <button id="prevPage" class="btn-page">上一页</button>
+            <span>当前页: <span id="currentPage">1</span></span>
+            <button id="nextPage" class="btn-page">下一页</button>
+            <input type="number" id="manualPage" min="1">
+            <button id="goToPage" class="btn-page">跳转</button>
+        </div>
 
-    </script>
+        <script>
+
+            let currentPage = 1;
+            function loadData(page) {
+                api = "/admin/users/page?page=" + page.toString();
+                const table = document.querySelector('.usertable');
+    
+                // 发起GET请求
+                fetch(api)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 清空表格内容
+                        table.innerHTML = '';
+                        users = data.users
+                        // 遍历json数据并创建新的表格行
+
+                        const headerRow = document.createElement('tr');
+                        headerRow.innerHTML = `
+                            <th>UID</th>
+                            <th>用户名</th>
+                            <th>电子邮箱</th>
+                            <th>最后登录时间</th>
+                            <th>操作</th>
+                        `;
+
+                        table.appendChild(headerRow);
+                        users.forEach(user => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td data-id="${user.uid}">${user.uid}</td>
+                                <td data-id="${user.uid}">${user.username}</td>
+                                <td data-id="${user.uid}">${user.email}</td>
+                                <td data-id="${user.uid}">${user.last_login}</td>
+                                <td>
+                                    <button class="btn-more" data-id="${user.uid}">更多</button>
+                                </td>
+                            `;
+                            table.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            document.getElementById('firstPage').addEventListener('click', function() {
+                currentPage = 1;
+                document.getElementById('currentPage').innerText = currentPage;
+                alert("点击首页");
+                loadData(currentPage);
+            });
+
+            document.getElementById('prevPage').addEventListener('click', function() {
+                if (currentPage > 1) {
+                currentPage--;
+                document.getElementById('currentPage').innerText = currentPage;
+                alert("点击上一页");
+                loadData(currentPage);
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', function() {
+                currentPage++;
+                document.getElementById('currentPage').innerText = currentPage;
+                loadData(currentPage);
+                alert("点击下一页");
+            });
+
+            document.getElementById('goToPage').addEventListener('click', function() {
+                const inputPage = parseInt(document.getElementById('manualPage').value);
+                if (inputPage >= 1) {
+                currentPage = inputPage;
+                document.getElementById('currentPage').innerText = currentPage;
+                alert("点击跳转页");
+                loadData(currentPage);
+                }
+            });
+
+        </script>
+    </div>
 </body>
 </html>

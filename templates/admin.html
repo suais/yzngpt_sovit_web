@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
-<title>ZN Voice 管理端</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
 
+    <title>ZN Voice 管理端</title>
 </head>
 <body>
     
@@ -50,31 +51,6 @@
         </div>
 
     </div>
-
-    <script>
-        function loadPage(page) {
-            fetch(page)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('content').innerHTML = html;
-            })
-            .catch(error => console.error('页面加载失败', error));
-        }
-
-        const menuItems = document.querySelectorAll('.sidebar ul li');
-
-        menuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                menuItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        window.addEventListener('load', function() {
-            document.getElementById('userstatics').click();
-          });
-
-
-    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>

@@ -6,6 +6,12 @@ from models.voice import api_server_play
 from flask import jsonify
 from flask import send_file
 from models.userstatics import respone as userstatics_respone
+from models.users import get_list_respone as users_get_list_respone
+from models.users import get_list_respone_json as users_get_list_respone_json
+from models.record import get_list_respone as record_get_list_respone
+from models.files import get_list_respone as files_get_list_respone
+from models.words import get_list_respone as words_get_list_respone
+from models.sms import get_list_respone as sms_get_list_respone
 
 app = Flask(__name__)
 
@@ -50,34 +56,43 @@ def admin_user_statics():
 
 @app.route('/admin/users')
 def admin_users():
-    respone = None
-    return render_template('users.html')
+    page = 1
+    respone = users_get_list_respone(page)
+    return render_template('users.html', respone=respone)
+
+@app.route('/admin/users/page')
+def admin_users_page():
+    page = request.args.get('page')
+    respone = users_get_list_respone_json(page)
+    return jsonify(respone)
 
 @app.route('/admin/record')
 def admin_record():
-    respone = None
-    return render_template('record.html')
+    page = 1
+    respone = record_get_list_respone(page)
+    return render_template('record.html', respone=respone)
 
 @app.route('/admin/voices')
 def admin_voices():
-    respone = None
-    return render_template('voices.html')
+    page = 1
+    respone = files_get_list_respone(page)
+    return render_template('voices.html', respone=respone)
 
 @app.route('/admin/words')
 def admin_words():
-    respone = None
-    return render_template('words.html')
+    respone = words_get_list_respone()
+    return render_template('words.html', respone=respone)
 
 @app.route('/admin/sms')
 def admin_sms():
-    respone = None
-    return render_template('sms.html')
+    page = 1
+    respone = sms_get_list_respone(page)
+    return render_template('sms.html', respone=respone)
 
 @app.route('/admin/logs')
 def admin_logs():
     respone = None
     return render_template('logs.html')
-
 
 
 if __name__ == '__main__':

@@ -21,8 +21,8 @@
   }
 
 .btn-newuser:hover {
-background-color: #2980b9;
-color: #fff;
+    background-color: #2980b9;
+    color: #fff;
 }
 
 .usertable {
@@ -33,7 +33,7 @@ color: #fff;
 }
 
 .usertable th, .usertable td {
-    padding: 8px;
+    padding: 6px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/userstatics.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <title>ZN Voice Admin</title>
 </head>
 <body>
@@ -15,117 +16,15 @@
         <ul class="list">
 
             {% for user in respone.users %}
-
             <li>
                 <div class="item">
-                    <p>UID:{{user.uid}}</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
+                    <p data-id="{{user.uid}}">UID:{{user.uid}}</p>
+                    <p data-id="{{user.uid}}">用户名:{{user.username}}</p>
+                    <p data-id="{{user.uid}}">登录时间:{{user.login_time}}</p>
+                    <p data-id="{{user.uid}}">在线时长:{{user.login_length}}</p>
                 </div>
             </li>
-
             {% endfor %}
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-
-            <li>
-                <div class="item">
-                    <p>UID:100000001</p>
-                    <p>用户名:小红</p>
-                    <p>登录时间:2024年1月24日16时20分</p>
-                    <p>在线时长:4小时00分</p>
-                </div>
-            </li>
-            
-
         </ul>
 
     </div> 

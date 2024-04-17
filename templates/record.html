@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/record.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <title>ZN Voice Admin</title>
 </head>
 <body>
@@ -11,7 +12,6 @@
         <div class="title">
             语音合成记录
         </div>
-
         <table class="recordtable">
             <tr>
                 <th>时间</th>
@@ -22,80 +22,82 @@
                 <th>合成用户</th>
                 <th>试听</th>
             </tr>
-
+            
+            {% for record in respone.records%}
             <tr>
-                <td>2024年4月21日18时22分</td>
-                <td>asasa.wav</td>
-                <td>16(s)</td>
-                <td>0.4MB</td>
+                <td data-id={{record.id}}>{{ record.create_at }}</td>
+                <td data-id={{record.id}}>{{ record.filename}}</td>
+                <td data-id={{record.id}}>{{ record.length}}(s)</td>
+                <td data-id={{record.id}}>{{ record.size }}MB</td>
                 <td>
-                    <button>查看</button>
+                    <button class="btn-more" data-id={{record.id}}>查看</button>
                 </td>
                 <td>小红</td>
                 <td>
-                    <button>播放</button>
+                    <button class="btn-more" data-id={{record.id}}>播放</button>
                 </td>
             </tr>
-
-            <tr>
-                <td>2024年4月21日18时22分</td>
-                <td>asasa.wav</td>
-                <td>16(s)</td>
-                <td>0.4MB</td>
-                <td>
-                    <button>查看</button>
-                </td>
-                <td>小红</td>
-                <td>
-                    <button>播放</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>2024年4月21日18时22分</td>
-                <td>asasa.wav</td>
-                <td>16(s)</td>
-                <td>0.4MB</td>
-                <td>
-                    <button>查看</button>
-                </td>
-                <td>小红</td>
-                <td>
-                    <button>播放</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>2024年4月21日18时22分</td>
-                <td>asasa.wav</td>
-                <td>16(s)</td>
-                <td>0.4MB</td>
-                <td>
-                    <button>查看</button>
-                </td>
-                <td>小红</td>
-                <td>
-                    <button>播放</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>2024年4月21日18时22分</td>
-                <td>asasa.wav</td>
-                <td>16(s)</td>
-                <td>0.4MB</td>
-                <td>
-                    <button>查看</button>
-                </td>
-                <td>小红</td>
-                <td>
-                    <button>播放</button>
-                </td>
-            </tr>
+            {% endfor %}
         </table>
+        <div class="pagination">
+            <button id="firstPage"  class="btn-page">首页</button>
+            <button id="prevPage" class="btn-page">上一页</button>
+            <span>当前页: <span id="currentPage">1</span></span>
+            <button id="nextPage" class="btn-page">下一页</button>
+            <input type="number" id="manualPage" min="1">
+            <button id="goToPage" class="btn-page">跳转</button>
+        </div>
     </div>
 
     <script>
+                    // 初始化当前页数
+                    let currentPage = 1;
+
+                    // 模拟加载数据的函数
+                    function loadData(page) {
+                        // 这里可以替换成真实的数据加载逻辑
+                        console.log(currentPage);
+                    }
+        
+                    // 加载初始页面数据
+                    loadData(currentPage);
+        
+                    // 首页按钮点击事件
+                    document.getElementById('firstPage').addEventListener('click', function() {
+                        currentPage = 1;
+                        document.getElementById('currentPage').innerText = currentPage;
+                        //loadData(currentPage);
+                        alert("点击首页");
+                    });
+        
+                    // 上一页按钮点击事件
+                    document.getElementById('prevPage').addEventListener('click', function() {
+                        if (currentPage > 1) {
+                        currentPage--;
+                        document.getElementById('currentPage').innerText = currentPage;
+                        //loadData(currentPage);
+                        alert("点击上一页");
+                        }
+                    });
+        
+                    // 下一页按钮点击事件
+                    document.getElementById('nextPage').addEventListener('click', function() {
+                        currentPage++;
+                        document.getElementById('currentPage').innerText = currentPage;
+                        //loadData(currentPage);
+                        alert("点击下一页");
+                    });
+        
+                    // 跳转按钮点击事件
+                    document.getElementById('goToPage').addEventListener('click', function() {
+                        const inputPage = parseInt(document.getElementById('manualPage').value);
+                        if (inputPage >= 1) {
+                        currentPage = inputPage;
+                        document.getElementById('currentPage').innerText = currentPage;
+                        //loadData(currentPage);
+                        alert("点击跳转页");
+                        }
+                    });
 
     </script>
 </body>

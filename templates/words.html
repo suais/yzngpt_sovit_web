@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/words.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
     <title>ZN Voice Admin</title>
 </head>
 <body>
@@ -12,12 +13,18 @@
             敏感词管理
         </div>
 
-        <textarea rows="20" placeholder="在这里输入文本" id="text"></textarea>
+        <textarea rows="20" placeholder="在这里输入文本" id="text">
+            {% for words in respone.words%}
+                {{words.text}}
+            {% endfor %}
+        </textarea>
         <button class="btn-save">保存</button>
 
     </div>
 
     <script>
+        
+        
 
     </script>
 </body>

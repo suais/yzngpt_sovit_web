@@ -1,4 +1,3 @@
-from models.userstatics import query_all
-
-result = query_all()
+from models.files import query_all_by_page
+result = query_all_by_page()
 print(result)
