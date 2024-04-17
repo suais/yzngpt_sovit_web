@@ -25,14 +25,14 @@
             
             {% for record in respone.records%}
             <tr>
-                <td data-id={{record.id}}>{{ record.create_at }}</td>
-                <td data-id={{record.id}}>{{ record.filename}}</td>
-                <td data-id={{record.id}}>{{ record.length}}(s)</td>
-                <td data-id={{record.id}}>{{ record.size }}MB</td>
+                <td data-id="{{record.id}}">{{ record.create_at }}</td>
+                <td data-id="{{record.id}}">{{ record.filename}}</td>
+                <td data-id="{{record.id}}">{{ record.length}}(s)</td>
+                <td data-id="{{record.id}}">{{ record.size }}MB</td>
                 <td>
                     <button class="btn-more" data-id={{record.id}}>查看</button>
                 </td>
-                <td>小红</td>
+                <td data-id="{{record.id}}">{{ record.uid }}</td>
                 <td>
                     <button class="btn-more" data-id={{record.id}}>播放</button>
                 </td>
@@ -50,54 +50,77 @@
     </div>
 
     <script>
-                    // 初始化当前页数
-                    let currentPage = 1;
+        let currentPage = 1;
+        function loadData(page) {
+            api = "/admin/record/page?page=" + page.toString();
+            const table = document.querySelector('.recordtable');
 
-                    // 模拟加载数据的函数
-                    function loadData(page) {
-                        // 这里可以替换成真实的数据加载逻辑
-                        console.log(currentPage);
-                    }
-        
-                    // 加载初始页面数据
-                    loadData(currentPage);
-        
-                    // 首页按钮点击事件
-                    document.getElementById('firstPage').addEventListener('click', function() {
-                        currentPage = 1;
-                        document.getElementById('currentPage').innerText = currentPage;
-                        //loadData(currentPage);
-                        alert("点击首页");
+            fetch(api)
+                .then(response => response.json())
+                .then(data => {
+                    table.innerHTML = '';
+                    records = data.records
+                    const headerRow = document.createElement('tr');
+                    headerRow.innerHTML = `
+                        <th>时间</th>
+                        <th>文件名称</th>
+                        <th>时间长度</th>
+                        <th>文件大小</th>
+                        <th>文字描述</th>
+                        <th>合成用户</th>
+                        <th>试听</th>
+                    `;
+
+                    table.appendChild(headerRow);
+                    records.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td data-id="${record.id}">${record.create_at}</td>
+                            <td data-id="${record.id}">${record.filename}</td>
+                            <td data-id="${record.id}">${record.length}(s)</td>
+                            <td data-id="${record.id}">${record.size }MB</td>
+                            <td>
+                                <button class="btn-more" data-id="${record.id}">查看</button>
+                            </td>
+                            <td data-id="${record.id}">${record.uid }</td>
+                            <td>
+                                <button class="btn-more" data-id=${record.id}>播放</button>
+                            </td>
+                        `;
+                        table.appendChild(row);
                     });
-        
-                    // 上一页按钮点击事件
-                    document.getElementById('prevPage').addEventListener('click', function() {
-                        if (currentPage > 1) {
-                        currentPage--;
-                        document.getElementById('currentPage').innerText = currentPage;
-                        //loadData(currentPage);
-                        alert("点击上一页");
-                        }
-                    });
-        
-                    // 下一页按钮点击事件
-                    document.getElementById('nextPage').addEventListener('click', function() {
-                        currentPage++;
-                        document.getElementById('currentPage').innerText = currentPage;
-                        //loadData(currentPage);
-                        alert("点击下一页");
-                    });
-        
-                    // 跳转按钮点击事件
-                    document.getElementById('goToPage').addEventListener('click', function() {
-                        const inputPage = parseInt(document.getElementById('manualPage').value);
-                        if (inputPage >= 1) {
-                        currentPage = inputPage;
-                        document.getElementById('currentPage').innerText = currentPage;
-                        //loadData(currentPage);
-                        alert("点击跳转页");
-                        }
-                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('firstPage').addEventListener('click', function() {
+            currentPage = 1;
+            document.getElementById('currentPage').innerText = currentPage;
+            loadData(currentPage);
+        });
+
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (currentPage > 1) {
+            currentPage--;
+            document.getElementById('currentPage').innerText = currentPage;
+            loadData(currentPage);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function() {
+            currentPage++;
+            document.getElementById('currentPage').innerText = currentPage;
+            loadData(currentPage);
+        });
+
+        document.getElementById('goToPage').addEventListener('click', function() {
+            const inputPage = parseInt(document.getElementById('manualPage').value);
+            if (inputPage >= 1) {
+            currentPage = inputPage;
+            document.getElementById('currentPage').innerText = currentPage;
+            loadData(currentPage);
+            }
+        });
 
     </script>
 </body>

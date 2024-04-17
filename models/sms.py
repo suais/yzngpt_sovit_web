@@ -50,3 +50,28 @@ def get_list_respone(page=1):
     data.total_page = 0
     data.localtion_page = page
     return data
+
+
+def get_list_respone_json(page=1):
+    rows = query_all_by_page(page)
+    smss = []
+    for row in rows:
+        sms = {}
+        sms["uid"] = row[0]
+        sms["username"] = row[1]
+        sms["create_at"] = row[2]
+        sms["msg"] = row[3]
+        sms["phone"] = row[4]
+        sms["id"] = row[5]
+        smss.append(sms)
+    
+    total_page = 0
+    localtion_page = page
+    
+    data_json = {
+        "smss": smss,
+        "total_page": total_page,
+        "localtion_page": localtion_page
+    }
+    
+    return data_json

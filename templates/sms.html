@@ -47,52 +47,67 @@
    
 
     <script>
-        // 初始化当前页数
         let currentPage = 1;
-
-        // 模拟加载数据的函数
         function loadData(page) {
-            // 这里可以替换成真实的数据加载逻辑
-            console.log(currentPage);
+            api = "/admin/sms/page?page=" + page.toString();
+            const table = document.querySelector('.smstable');
+
+            fetch(api)
+                .then(response => response.json())
+                .then(data => {
+                    table.innerHTML = '';
+                    smss = data.smss
+                    const headerRow = document.createElement('tr');
+                    headerRow.innerHTML = `
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>收件人电话</th>
+                        <th>发送时间</th>
+                        <th>短信内容</th>
+                    `;
+
+                    table.appendChild(headerRow);
+                    smss.forEach(sms => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td data-id="${sms.id}">${sms.id}</td>
+                            <td data-id="${sms.id}">${sms.username}</td>
+                            <td data-id="${sms.id}}">${sms.phone}</td>
+                            <td data-id="${sms.id}">${sms.create_at}</td>
+                            <td data-id="${sms.id}">${sms.msg}</td>
+                        `;
+                        table.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
         }
 
-        // 加载初始页面数据
-        loadData(currentPage);
-
-        // 首页按钮点击事件
         document.getElementById('firstPage').addEventListener('click', function() {
             currentPage = 1;
             document.getElementById('currentPage').innerText = currentPage;
-            //loadData(currentPage);
-            alert("点击首页");
+            loadData(currentPage);
         });
 
-        // 上一页按钮点击事件
         document.getElementById('prevPage').addEventListener('click', function() {
             if (currentPage > 1) {
             currentPage--;
             document.getElementById('currentPage').innerText = currentPage;
-            //loadData(currentPage);
-            alert("点击上一页");
+            loadData(currentPage);
             }
         });
 
-        // 下一页按钮点击事件
         document.getElementById('nextPage').addEventListener('click', function() {
             currentPage++;
             document.getElementById('currentPage').innerText = currentPage;
-            //loadData(currentPage);
-            alert("点击下一页");
+            loadData(currentPage);
         });
 
-        // 跳转按钮点击事件
         document.getElementById('goToPage').addEventListener('click', function() {
             const inputPage = parseInt(document.getElementById('manualPage').value);
             if (inputPage >= 1) {
             currentPage = inputPage;
             document.getElementById('currentPage').innerText = currentPage;
-            //loadData(currentPage);
-            alert("点击跳转页");
+            loadData(currentPage);
             }
         });
 

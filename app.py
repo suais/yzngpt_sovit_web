@@ -9,9 +9,12 @@ from models.userstatics import respone as userstatics_respone
 from models.users import get_list_respone as users_get_list_respone
 from models.users import get_list_respone_json as users_get_list_respone_json
 from models.record import get_list_respone as record_get_list_respone
+from models.record import get_list_respone_json as record_get_list_respone_json
 from models.files import get_list_respone as files_get_list_respone
+from models.files import get_list_respone_json as files_get_list_respone_json
 from models.words import get_list_respone as words_get_list_respone
 from models.sms import get_list_respone as sms_get_list_respone
+from models.sms import get_list_respone_json as sms_get_list_respone_json
 
 app = Flask(__name__)
 
@@ -72,11 +75,23 @@ def admin_record():
     respone = record_get_list_respone(page)
     return render_template('record.html', respone=respone)
 
+@app.route('/admin/record/page')
+def admin_record_page():
+    page = request.args.get('page')
+    respone = record_get_list_respone_json(page)
+    return jsonify(respone)
+
 @app.route('/admin/voices')
 def admin_voices():
     page = 1
     respone = files_get_list_respone(page)
     return render_template('voices.html', respone=respone)
+
+@app.route('/admin/voices/page')
+def admin_voices_page():
+    page = request.args.get('page')
+    respone = files_get_list_respone_json(page)
+    return jsonify(respone)
 
 @app.route('/admin/words')
 def admin_words():
@@ -88,6 +103,12 @@ def admin_sms():
     page = 1
     respone = sms_get_list_respone(page)
     return render_template('sms.html', respone=respone)
+
+@app.route('/admin/sms/page')
+def admin_sms_page():
+    page = request.args.get('page')
+    respone = sms_get_list_respone_json(page)
+    return jsonify(respone)
 
 @app.route('/admin/logs')
 def admin_logs():

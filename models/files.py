@@ -55,3 +55,31 @@ def get_list_respone(page=1):
     data.localtion_page = page
     
     return data
+
+def get_list_respone_json(page=1):
+    
+    rows = query_all_by_page(page)
+    files = []
+    
+    for row in rows:
+        file = {}
+        file["filename"] = row[0]
+        file["size"] = row[1]
+        file["lenght"] = row[2]
+        file["text"] = row[3]
+        file["create_at"] = row[4]
+        file["id"] = row[5]
+        file["status"] = row[6]
+        file["path"] = row[7]
+        files.append(file)
+    
+    total_page = 0
+    localtion_page = page
+    
+    data_json = {
+        "files": files,
+        "total_page": total_page,
+        "localtion_page": localtion_page
+    }
+    
+    return data_json
