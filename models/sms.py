@@ -14,9 +14,13 @@ def query_all():
     sql = f"""
     SELECT * FROM {table_name}
     """
-    cursor.execute(sql)
-    rows = cursor.fetchall()
-    db_pool.release_connection(conn)
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except Exception as e:
+        return []
+    finally:
+        db_pool.release_connection(conn)
     return rows
 
 def query_all_by_page(page=1):
@@ -29,9 +33,13 @@ def query_all_by_page(page=1):
     SELECT * FROM {table_name}
     LIMIT ? OFFSET ?;
     """
-    cursor.execute(sql, (limit, offset))
-    rows = cursor.fetchall()
-    db_pool.release_connection(conn)
+    try:
+        cursor.execute(sql, (limit, offset))
+        rows = cursor.fetchall()
+    except Exception as e:
+        return []
+    finally:
+        db_pool.release_connection(conn)
     return rows
 
 def get_list_respone(page=1):

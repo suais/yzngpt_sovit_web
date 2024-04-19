@@ -12,7 +12,7 @@
         <div class="title">
             语音合成记录
         </div>
-        <table class="recordtable">
+        <table class="recordtable" id="recordtable">
             <tr>
                 <th>时间</th>
                 <th>文件名称</th>
@@ -30,7 +30,7 @@
                 <td data-id="{{record.id}}">{{ record.length}}(s)</td>
                 <td data-id="{{record.id}}">{{ record.size }}MB</td>
                 <td>
-                    <button class="btn-more" data-id={{record.id}}>查看</button>
+                    <div class="truncate" title="{{ record.text }}">{{ record.text }}</div>
                 </td>
                 <td data-id="{{record.id}}">{{ record.uid }}</td>
                 <td>
@@ -80,7 +80,7 @@
                             <td data-id="${record.id}">${record.length}(s)</td>
                             <td data-id="${record.id}">${record.size }MB</td>
                             <td>
-                                <button class="btn-more" data-id="${record.id}">查看</button>
+                                <div class="truncate" title="${record.text}">${record.text}</div>
                             </td>
                             <td data-id="${record.id}">${record.uid }</td>
                             <td>
@@ -88,6 +88,8 @@
                             </td>
                         `;
                         table.appendChild(row);
+                        var parentElement = document.getElementById('recordtable');
+                        click_more_button(parentElement);
                     });
                 })
                 .catch(error => console.error('Error:', error));
@@ -121,6 +123,24 @@
             loadData(currentPage);
             }
         });
+
+        function click_more_button(parentElement){
+            var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
+            moreButtonsElement.forEach(function(morebutton) {
+                if(!morebutton.hasAttribute('data-listener-added')){
+                    morebutton.setAttribute('data-listener-added', true);
+                    morebutton.addEventListener('click', function(e) {
+                        console.log(e.target.dataset.id)
+                        alert("点击了播放按钮")
+                    });
+                }
+            });   
+        }
+
+
+        var parentElement = document.getElementById('recordtable');
+        click_more_button(parentElement);
+
 
     </script>
 </body>

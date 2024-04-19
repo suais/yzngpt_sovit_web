@@ -16,13 +16,20 @@ function loadPage(page) {
                 script.src = src;
                 document.body.appendChild(script); // 将新创建的 script 标签添加到页面中
             } else {
-                // 如果不存在 src 属性，说明是内联的 JavaScript 代码，直接执行
-                eval(scriptTags[i].innerHTML);
+                // 如果不存在 src 属性，说明是内联的 JavaScript 代码，将其保存到一个函数中
+                const scriptText = scriptTags[i].innerHTML.trim();
+                if (scriptText) {
+                    const scriptFunc = new Function(scriptText);
+                    scriptFunc();
+                }
             }
         }
+
+        // 在动态加载完 JavaScript 后，手动调用一个初始化函数
     })
     .catch(error => console.error('页面加载失败', error));
 }
+
 
 const menuItems = document.querySelectorAll('.sidebar ul li');
 

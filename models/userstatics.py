@@ -13,9 +13,13 @@ def query_all():
     sql = f"""
     SELECT * FROM {table_name}
     """
-    cursor.execute(sql)
-    rows = cursor.fetchall()
-    db_pool.release_connection(conn)
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except Exception as e:
+        return []
+    finally:
+        db_pool.release_connection(conn)
     return rows
 
 

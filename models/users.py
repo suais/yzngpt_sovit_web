@@ -2,6 +2,7 @@ from .conn import SQLITE
 from .conn import SQLitePool
 from .respone_base import UsersRespone
 from .base import Users
+import uuid
 
 
 table_name = "users"
@@ -14,14 +15,17 @@ def query_all():
     sql = f"""
     SELECT * FROM {table_name}
     """
-    cursor.execute(sql)
-    rows = cursor.fetchall()
-    db_pool.release_connection(conn)
+    try:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
     return rows
 
 def query_all_by_page(page=1):
     offset = (int(page) - 1) * limit
-    
     db_pool = SQLitePool(SQLITE)
     conn = db_pool.get_connection()
     cursor = conn.cursor()
@@ -29,17 +33,150 @@ def query_all_by_page(page=1):
     SELECT * FROM {table_name}
     LIMIT ? OFFSET ?;
     """
-    cursor.execute(sql, (limit, offset))
-    rows = cursor.fetchall()
-    db_pool.release_connection(conn)
+    try:
+        cursor.execute(sql, (limit, offset))
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
     return rows
 
 
-def get_list_respone(page=1):
+def query_all_by_username(username):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    SELECT * FROM {table_name}
+    WHERE username = ?;
+    """
+    try:
+        cursor.execute(sql, (username,))
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
+    return rows
+
+def query_all_by_username_uid(username, uid):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    SELECT * FROM {table_name}
+    WHERE username = ?
+    AND uid = ?;
+    """
+    try:
+        cursor.execute(sql, (username, uid))
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
+    return rows
+
+def query_all_by_uid(uid):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    SELECT * FROM {table_name}
+    WHERE uid = ?;
+    """
+    try:
+        cursor.execute(sql, (uid,))
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
+    return rows 
+
+def query_insert_user(uid, username, email, password, is_admin):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    INSERT INTO {table_name} (uid, username, email, password, is_admin)
+    VALUES (?, ?, ?, ?, ?)
+    """
+    try:
+        cursor.execute(sql, (uid, username, email, password, is_admin))
+        conn.commit()
+    except Exception as e:
+        return False
+    finally:
+        db_pool.release_connection(conn)
+    return True
+
+def query_update_user(uid, username, email, password):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    UPDATE {table_name}
+    SET username = ?, email = ?, password = ?
+    WHERE uid = ?;
+    """
+    try:
+        cursor.execute(sql, (username, email, password, uid))
+        conn.commit()
+    except Exception as e:
+        return False
+    finally:
+        db_pool.release_connection(conn)
+    return True
+
+
+def new_user(username, email, password, is_admin):
+    uid = str(uuid.uuid4())
+    is_uid_exist = query_all_by_uid(uid) == []
+    is_username_exist = query_all_by_username(username) ==[]
+    is_email_empty = email == ""
+    is_password_empty = password == ""
     
+    if is_uid_exist and is_username_exist and not is_password_empty:
+        query_insert_user(uid, username, email, password, is_admin)
+        return True
+    else:
+        return False
+    
+
+def edit_user(uid, username, email, password):
+    is_username_exist_self = query_all_by_username_uid(username, uid) == []
+    print(is_username_exist_self)
+    if not is_username_exist_self:
+        query_update_user(uid, username, email, password)
+        return True
+    else:
+        is_username_exist = query_all_by_username(username) == []
+        if is_username_exist:
+            query_update_user(uid, username, email, password)
+            return True
+        else:
+            return False
+
+    
+def new_user_json(username, email, password, is_admin="0"):
+    result = new_user(username, email, password, is_admin)
+    if result:
+        return {"status": "success"}
+    else:
+        return {"status": "fail"}
+    
+def edit_user_json(uid, username, email, password):
+    result = edit_user(uid, username, email, password)
+    if result:
+        return {"status": "success"}
+    else:
+        return {"status": "fail"}
+
+def get_list_respone(page=1):
     rows = query_all_by_page(page)
     data = UsersRespone()
-    
     for row in rows:
         user = Users()
         user.username = row[0]
@@ -53,7 +190,6 @@ def get_list_respone(page=1):
     
     data.total_page = 0
     data.localtion_page = page
-    
     return data
 
 def get_list_respone_json(page=1):

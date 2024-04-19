@@ -44,3 +44,32 @@ color: #fff;
 .voicetable tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+
+#drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.truncate {
+    width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .truncate:hover {
+    cursor: pointer;
+  }
+
+textarea {
+    margin-top: 20px;
+    width: 94%;
+    padding: 10px;
+    background-color: #F9F9F9;
+    border-radius: 5px;
+    border: 1px solid #497AF6;
+    font-size: 14px;
+    resize: none;
+}

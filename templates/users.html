@@ -11,10 +11,10 @@
     <div class="concontiner"> 
         <div class="title">
             账号管理
-            <button class="btn-newuser">新建</button>
+            <button class="btn-newuser" id="btn-newuser">新建</button>
         </div>
 
-        <table class="usertable">
+        <table class="usertable" id="usertable">
             <tr>
                 <th>UID</th>
                 <th>用户名</th>
@@ -25,9 +25,9 @@
 
             {% for user in respone.users %}
             <tr>
-                <td data-id="{{user.uid}}">{{user.uid}}</td>
-                <td data-id="{{user.uid}}">{{user.username}}</td>
-                <td data-id="{{user.uid}}">{{user.email}}</td>
+                <td data-id="{{user.uid}}" class="td-uid">{{user.uid}}</td>
+                <td data-id="{{user.uid}}" class="td-username">{{user.username}}</td>
+                <td data-id="{{user.uid}}" class="td-email">{{user.email}}</td>
                 <td data-id="{{user.uid}}">{{user.last_login}}</td>
                 <td>
                     <button class="btn-more" data-id="{{user.uid}}">更多</button>
@@ -45,8 +45,65 @@
             <button id="goToPage" class="btn-page">跳转</button>
         </div>
 
-        <script>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+              <span class="close" id="btn-close">&times;</span>
+              <h2>新建用户</h2>
+                <label for="fname">用户名:</label><br>
+                <input type="text" id="fname" name="fname" required><br>
 
+                <label for="email">电子邮箱:</label><br>
+                <input type="text" id="email" name="email"><br><br>
+
+                <label for="password">密码:</label><br>
+                <input type="text" id="password" name="password" required><br><br>
+
+                <button class="btn-sumbit" id="btn-sumbit">提交</button>
+            </div>
+          </div>
+
+          <div id="editModal" class="modal">
+            <div class="modal-content">
+              <span class="close" id="btn-editclose">&times;</span>
+              <h2>编辑用户</h2>
+                <label for="fname">用户名:</label><br>
+                <input type="text" id="edit-username" name="fname" required><br>
+
+                <label for="email">电子邮箱:</label><br>
+                <input type="text" id="edit-email" name="email"><br><br>
+
+                <label for="password">密码:</label><br>
+                <input type="text" id="edit-password" name="password" required><br><br>
+
+                <button class="btn-sumbit" id="btn-edit_sumbit">提交</button>
+            </div>
+          </div>
+
+          <div id="editModal" class="modal">
+            <div class="modal-content">
+              <span class="close" id="btn-editclose">&times;</span>
+              <h2>编辑用户</h2>
+                <label for="fname">用户名:</label><br>
+                <input type="text" id="edit-username" name="fname" required><br>
+
+                <label for="email">电子邮箱:</label><br>
+                <input type="text" id="edit-email" name="email"><br><br>
+
+                <label for="password">密码:</label><br>
+                <input type="text" id="edit-password" name="password" required><br><br>
+
+                <button class="btn-sumbit" id="btn-edit_sumbit">提交</button>
+            </div>
+          </div>
+
+
+          <div id="popupMenu">
+            <a id="btn-edit">编辑</a>
+            <a>停用账户</a>
+            <a>删除</a>
+          </div>
+
+        <script>
             let currentPage = 1;
             function loadData(page) {
                 api = "/admin/users/page?page=" + page.toString();
@@ -70,15 +127,17 @@
                         users.forEach(user => {
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td data-id="${user.uid}">${user.uid}</td>
-                                <td data-id="${user.uid}">${user.username}</td>
-                                <td data-id="${user.uid}">${user.email}</td>
+                                <td data-id="${user.uid}" class="td-uid">${user.uid}</td>
+                                <td data-id="${user.uid}" class="td-username">${user.username}</td>
+                                <td data-id="${user.uid}" class="td-email">${user.email}</td>
                                 <td data-id="${user.uid}">${user.last_login}</td>
                                 <td>
                                     <button class="btn-more" data-id="${user.uid}">更多</button>
                                 </td>
                             `;
                             table.appendChild(row);
+                            var parentElement = document.getElementById('usertable');
+                            click_more_button(parentElement);
                         });
                     })
                     .catch(error => console.error('Error:', error));
@@ -112,6 +171,151 @@
                 loadData(currentPage);
                 }
             });
+
+            var select_dataset = "";
+
+            function click_more_button(parentElement){
+                var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
+                moreButtonsElement.forEach(function(morebutton) {
+                    if(!morebutton.hasAttribute('data-listener-added')){
+                        morebutton.setAttribute('data-listener-added', true);
+                        morebutton.addEventListener('click', function(e) {
+                            console.log(e.target.dataset.id)
+                            select_dataset = e.target.dataset.id;
+                            var menu = document.getElementById("popupMenu");
+                            if (menu.style.display === "block") {
+                                menu.style.display = "none";
+                            } else {
+                                var btn = event.target;
+                                var rect = btn.getBoundingClientRect();
+                                menu.style.top = rect.bottom + "px";
+                                menu.style.left = rect.left + "px";
+                                menu.style.display = "block";
+                            }
+                        });
+                    }
+                });   
+            }
+
+            var parentElement = document.getElementById('usertable');
+            click_more_button(parentElement);
+
+            document.getElementById("btn-newuser").addEventListener('click', function(e) {
+                var menu = document.getElementById("popupMenu");
+                menu.style.display = "none";
+                document.getElementById("myModal").style.display = "block";
+            });
+
+            document.getElementById("btn-close").addEventListener('click', function(e) {
+                document.getElementById("myModal").style.display = "none";
+            });
+
+            document.getElementById("btn-sumbit").addEventListener('click', function(e) {
+                const fname = document.getElementById("fname").value;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                fetch('/admin/users/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: fname,
+                        email: email,
+                        password: password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    const status = data.status;
+                    if(status == "success"){
+                        document.getElementById("myModal").style.display = "none";
+                        alert("注册成功");
+                    }
+                    else{
+                        alert("注册失败，用户已存在");
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert("网络错误");
+                });
+                document.getElementById("myModal").style.display = "none";
+            });
+
+
+            document.getElementById("btn-edit").addEventListener('click', function(e) {
+                const td_uid_element = document.querySelector(`[data-id="${select_dataset}"].td-uid`);
+                const td_username_element = document.querySelector(`[data-id="${select_dataset}"].td-username`);
+                const td_email_element = document.querySelector(`[data-id="${select_dataset}"].td-email`);
+
+                const edit_username = document.getElementById("edit-username");
+                const edit_email = document.getElementById("edit-email");
+                const edit_password = document.getElementById("edit-password");
+
+                edit_username.value = td_username_element.innerText;
+                edit_email.value = td_email_element.innerText;                
+
+                document.getElementById("popupMenu").style.display = "none";
+                document.getElementById("editModal").style.display = "block";
+            });
+
+
+            document.getElementById("btn-editclose").addEventListener('click', function(e) {
+                document.getElementById("editModal").style.display = "none";
+            });
+
+
+            
+            document.getElementById("edit-username").addEventListener('change', function(e) {
+                document.getElementById("edit-username").value = e.target.value;
+            });
+
+            document.getElementById("edit-email").addEventListener('change', function(e) {
+                document.getElementById("edit-email").value = e.target.value;
+            });
+
+
+            document.getElementById("btn-edit_sumbit").addEventListener('click', function(e) {
+                const td_uid_element = document.querySelector(`[data-id="${select_dataset}"].td-uid`).innerText;
+                const edit_username = document.getElementById("edit-username").value;
+                const edit_email = document.getElementById("edit-email").value;
+                const edit_password = document.getElementById("edit-password").value;
+
+                fetch('/admin/users/edit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        uid: td_uid_element,
+                        username: edit_username,
+                        email: edit_email,
+                        password: edit_password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    const status = data.status;
+                    if(status == "success"){
+                        document.getElementById("editModal").style.display = "none";
+                        alert("修改成功");
+                    }
+                    else{
+                        alert("修改失败，存在重复数据");
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert("网络错误");
+                });
+                
+                document.getElementById("editModal").style.display = "none";
+
+            });
+
 
         </script>
     </div>

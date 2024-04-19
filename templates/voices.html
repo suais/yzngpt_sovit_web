@@ -11,10 +11,10 @@
     <div class="concontiner"> 
         <div class="title">
             语音管理
-            <button class="btn-newvoice">新建</button>
+            <button class="btn-newvoice" id="btn-newvoice">上传</button>
         </div>
 
-        <table class="voicetable">
+        <table class="voicetable" id="voicetable">
             <tr>
                 <th>编号</th>
                 <th>文件名称</th>
@@ -28,16 +28,19 @@
             <tr>
                 <td data-id="{{ voice.id }}">{{ voice.id }}</td>
                 <td data-id="{{ voice.id }}">{{ voice.filename }}</td>
-                <td data-id="{{ voice.id }}">{{ voice.size }}MB</td>
+                <td data-id="{{ voice.id }}">{{ voice.size }}(MB)</td>
                 <td data-id="{{ voice.id }}">{{ voice.lenght }}(s)</td>
-                <td data-id="{{ voice.id }}">{{ voice.text }}</td>
+                <td data-id="{{ voice.id }}">
+                    <div data-id="{{ voice.id }}" class="truncate" title="{{ voice.text }}">{{ voice.text }}</div>
+                </td>
                 <td data-id="{{ voice.id }}">{{ voice.create_at }}</td>
                 <td>
-                    <button class="btn-more" data-id="{{ voice.id }}">编辑</button>
+                    <button class="btn-more" data-id="{{ voice.id }}">编辑文字</button>
                 </td>
             </tr>
             {% endfor %}
         </table>
+
         <div class="pagination">
             <button id="firstPage"  class="btn-page">首页</button>
             <button id="prevPage" class="btn-page">上一页</button>
@@ -47,6 +50,29 @@
             <button id="goToPage" class="btn-page">跳转</button>
         </div>
     </div>
+
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="btn-close">&times;</span>
+            <div id="drop-area">
+                <h3>拖放文件到此处或点击选择文件</h3>
+                <input type="file" id="file-input" accept=".wav" style="display: none;">
+                <div id="drop-zone">选择文件(WAV)</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="btn-editclose">&times;</span>
+          <h2>编辑描述信息</h2>
+            <textarea rows="20" placeholder="在这里输入文本" id="edit-text"> </textarea>
+            <button class="btn-sumbit" id="btn-edit_sumbit">保存</button>
+        </div>
+      </div>
+
+
     <script>
         let currentPage = 1;
         function loadData(page) {
@@ -75,15 +101,19 @@
                         row.innerHTML = `
                             <td data-id="${file.id}">${file.id}</td>
                             <td data-id="${file.id}">${file.filename}</td>
-                            <td data-id="${file.id}">${file.size}MB</td>
+                            <td data-id="${file.id}">${file.size}(MB)</td>
                             <td data-id="${file.id}"">${file.lenght}(s)</td>
-                            <td data-id="${file.id}">${file.text}</td>
+                            <td data-id="${file.id}">
+                                <div data-id="${file.id}" class="truncate" title="${file.text}">${file.text}</div>
+                            </td>
                             <td data-id="${file.id}">${file.create_at}</td>
                             <td>
                                 <button class="btn-more" data-id="${file.id}">编辑</button>
                             </td>
                         `;
                         table.appendChild(row);
+                        var parentElement = document.getElementById('voicetable');
+                        click_more_button(parentElement);                
                     });
                 })
                 .catch(error => console.error('Error:', error));
@@ -118,6 +148,113 @@
             }
         });
 
+        function click_more_button(parentElement){
+            var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
+            moreButtonsElement.forEach(function(morebutton) {
+                if(!morebutton.hasAttribute('data-listener-added')){
+                    morebutton.setAttribute('data-listener-added', true);
+                    morebutton.addEventListener('click', function(e) {
+                        console.log(e.target.dataset.id)
+
+                        const td_text_element = document.querySelector(`[data-id="${e.target.dataset.id}"].truncate`);
+
+                        document.getElementById("editModal").style.display = "block";
+                        document.getElementById("edit-text").value = td_text_element.innerText;
+
+                        alert("点击编辑按钮")
+                    });
+                }
+            });   
+        }
+
+
+        document.getElementById("edit-text").addEventListener('change', function(e) {
+            document.getElementById("edit-text").value = e.target.value;
+        });
+
+
+        document.getElementById("btn-editclose").addEventListener('click', function(e) {
+            document.getElementById("editModal").style.display = "none";
+        });
+
+
+        var parentElement = document.getElementById('voicetable');
+        click_more_button(parentElement);
+
+        document.getElementById("btn-newvoice").addEventListener('click', function(e) {
+            document.getElementById("myModal").style.display = "block";
+        });
+
+        document.getElementById("btn-close").addEventListener('click', function(e) {
+            document.getElementById("myModal").style.display = "none";
+        });
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        
+        // 防止拖动文件在浏览器中打开
+        dropZone.addEventListener('dragover', (event) => {
+          event.preventDefault();
+        });
+        
+        // 处理拖放事件
+        dropZone.addEventListener('drop', (event) => {
+          event.preventDefault();
+          handleFiles(event.dataTransfer.files);
+        });
+        
+        // 处理点击上传事件
+        dropZone.addEventListener('click', () => {
+          fileInput.click();
+        });
+        
+        // 监听文件选择事件
+        fileInput.addEventListener('change', (event) => {
+          handleFiles(event.target.files);
+        });
+        
+        // 处理上传的文件
+        function handleFiles(files) {
+            // 检查文件是否符合要求
+            const validTypes = ['.wav'];
+            for (const file of files) {
+              const fileName = file.name.toLowerCase();
+              const isValidType = validTypes.some(type => fileName.endsWith(type));
+              if (!isValidType) {
+                alert(`文件 ${file.name} 不符合格式要求`);
+                return;
+              }
+            }
+        
+          // 创建 FormData 实例
+          const formData = new FormData();
+          for (const file of files) {
+            formData.append('file', file);
+          }
+        
+          // 发送 POST 请求上传文件
+          fetch('/admin/voices/upload', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            document.getElementById("myModal").style.display = "none";
+
+            if (data.status == "success") {
+                alert('文件上传成功');
+            } else if (data.status == "fail") {
+                alert('文件上传失败');
+            } else if (data.status == "exist") {
+                alert('文件已存在');
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            alert('文件上传失败');
+          });
+        }
     </script>
 </body>
 </html>
