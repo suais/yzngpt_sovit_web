@@ -23,30 +23,18 @@
                     <div class="sund-content-select"> 
                         <p class="tip-text">2.选择关联音频:</p>
                         <select id="sound" name="sound" class="select">
-                            <option value="0">[输入文字]</option>
-                            <option value="1">[输入GPT生成用户名]问候</option>
-                            <option value="2">[输入AI生成名字]引导提问</option>
-                            <option value="3">[输入AI生成名字]打招呼</option>
-                            <option value="4">[输入]RTOS和高手C课程进一步介绍</option>
-                            <option value="5">[输入]RTOS是全网更低门槛课程有门槛学高手C课程</option>
-                            <option value="6">[输入]RTOS课程郭天祥经典</option>
-                            <option value="7">[输入]告诉大家振南一直在线答疑</option>
-                            <option value="8">[输入]学RTOS之前建议先学高手C</option>
-                            <option value="9">[输入]学习课程的重要性</option>
-                            <option value="10">[输入]希望我的知识可以帮到大家</option>
-                            <option value="11">[输入]引导下单+联系客服</option>
-                            <option value="12">[输入]引导多来直播间问问题</option>
-                            <option value="13">[输入]引导领内部资料</option>
-                            <option value="14">[输入]课程中的经验你在别的课程学不到</option>
-                            <option value="15">[输入]课程介绍+让大家留问题振南答疑</option>
+                            {% for file in respone.files %}
+                            <option value="{{file.id}}">{{ file.filename }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
                     <div class="sund-content-select"> 
                         <p class="tip-text">3.选择音频模型:</p>
                         <select id="model" name="model" class="select">
-                            <option value="0">振南老师</option>
-                            <option value="1">暂无其它</option>
+                            {% for model in respone.models %}
+                                <option value="{{model.id}}">{{model.name}}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -175,7 +163,6 @@
                 return ;
             }
 
-            
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/getmsg?' + textparameter + selectparameter, true);
             xhr.onreadystatechange = function() {
@@ -188,7 +175,11 @@
                             audio_time = response.time;
                             document.getElementById("file-name-result").innerText = audio_path;
                             document.getElementById("file-time-result").innerText = audio_time;
-                            console.log("合成完成")
+                            if (response.msg == "含有违禁词"){
+                                alert("检测到含有违禁词")
+                            } else {
+                                console.log("合成完成")
+                            };
                         }
                     } else {
                         console.log('请求失败');
@@ -219,6 +210,7 @@
             xhr.send();
         });
 
+
         document.getElementById('local-play').addEventListener('click', function() {
             var audio = new Audio('/api/localplay' + '/' + audio_path);
             audio.addEventListener('canplaythrough', function() {
@@ -226,6 +218,24 @@
             });
             audio.load();
         });
+    
+
+        function click_more_button(parentElement){
+            var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
+            moreButtonsElement.forEach(function(morebutton) {
+                if(!morebutton.hasAttribute('data-listener-added')){
+                    morebutton.setAttribute('data-listener-added', true);
+                    morebutton.addEventListener('click', function(e) {
+                        console.log(e.target.dataset.id)
+                        select_dataset = e.target.dataset.id;
+                        const td_text_element = document.querySelector(`[data-id="${e.target.dataset.id}"].truncate`);
+                        document.getElementById("editModal").style.display = "block";
+                        document.getElementById("edit-text").value = td_text_element.innerText;
+
+                    });
+                }
+            });   
+        }
 
         document.getElementById('clear').addEventListener('click', function() {
             var text = document.getElementById('text').value;

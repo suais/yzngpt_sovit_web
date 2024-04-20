@@ -12,18 +12,61 @@
         <div class="title">
             敏感词管理
         </div>
-
-        <textarea rows="20" placeholder="在这里输入文本" id="text">
-            {% for words in respone.words%}
-                {{words.text}}
-            {% endfor %}
-        </textarea>
-        <button class="btn-save">保存</button>
-
+        <textarea rows="30" placeholder="在这里输入文本" id="text"></textarea>
+        <p>提示：词语中间请使用中文“，”进行分割，并且不能包含任何的空格，最后结尾的词语不能包含“，”</p>
+        <button class="btn-save" id="btn-save">保存</button>
     </div>
 
     <script>
-        
+
+        function loadData() {
+            api = "/admin/words/get";
+
+            fetch(api)
+                .then(response => response.json())
+                .then(data => {
+                    words_list = data.words;
+                    words = words_list[0].text
+                    document.getElementById("text").value = words;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        loadData();
+
+        document.getElementById("text").addEventListener('change', function(e) {
+            document.getElementById("text").value = e.target.value;
+        });
+
+
+        document.getElementById("btn-save").addEventListener('click', function(e) {
+            const edit_text = document.getElementById("text").value;
+
+            fetch('/admin/words/edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text: edit_text
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                const status = data.status;
+                if(status == "success"){
+                    alert("修改成功");
+                }
+                else{
+                    alert("修改失败");
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("网络错误");
+            });
+        });
         
 
     </script>

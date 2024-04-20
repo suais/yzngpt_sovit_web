@@ -26,7 +26,7 @@
             {% for record in respone.records%}
             <tr>
                 <td data-id="{{record.id}}">{{ record.create_at }}</td>
-                <td data-id="{{record.id}}">{{ record.filename}}</td>
+                <td data-id="{{record.id}}">{{ record.filename }}</td>
                 <td data-id="{{record.id}}">{{ record.length}}(s)</td>
                 <td data-id="{{record.id}}">{{ record.size }}MB</td>
                 <td>
@@ -34,7 +34,7 @@
                 </td>
                 <td data-id="{{record.id}}">{{ record.uid }}</td>
                 <td>
-                    <button class="btn-more" data-id={{record.id}}>播放</button>
+                    <button class="btn-more" data-id={{record.filename}}>播放</button>
                 </td>
             </tr>
             {% endfor %}
@@ -84,7 +84,7 @@
                             </td>
                             <td data-id="${record.id}">${record.uid }</td>
                             <td>
-                                <button class="btn-more" data-id=${record.id}>播放</button>
+                                <button class="btn-more" data-id=${record.filename}>播放</button>
                             </td>
                         `;
                         table.appendChild(row);
@@ -124,6 +124,15 @@
             }
         });
 
+
+        function local_play(audio_path){
+                var audio = new Audio('/api/localplay' + '/' + audio_path);
+                audio.addEventListener('canplaythrough', function() {
+                    audio.play();
+                });
+                audio.load();
+        }
+
         function click_more_button(parentElement){
             var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
             moreButtonsElement.forEach(function(morebutton) {
@@ -131,17 +140,16 @@
                     morebutton.setAttribute('data-listener-added', true);
                     morebutton.addEventListener('click', function(e) {
                         console.log(e.target.dataset.id)
-                        alert("点击了播放按钮")
+                        select_dataset = e.target.dataset.id;
+                        local_play(select_dataset);
                     });
                 }
             });   
         }
 
-
         var parentElement = document.getElementById('recordtable');
         click_more_button(parentElement);
-
-
+        
     </script>
 </body>
 </html>

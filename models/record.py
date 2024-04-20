@@ -41,11 +41,27 @@ def query_all_by_page(page=1):
         db_pool.release_connection(conn)
     return rows
 
+
+def query_insert_recoed(filename, length, size, text, uid, create_at, combined_path, gpt_path, gpt_name, id):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    INSERT INTO {table_name} (filename, length, size, text, uid, create_at, combined_path, gpt_path, gpt_name, id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    try:
+        cursor.execute(sql, (filename, length, size, text, uid, create_at, combined_path, gpt_path, gpt_name, id))
+        conn.commit()
+    except Exception as e:
+        return False
+    finally:
+        db_pool.release_connection(conn)
+    return True
+
 def get_list_respone(page=1):
-    
     rows = query_all_by_page(page)
     data = RecordRespone()
-    
     for row in rows:
         record = Record()
         record.filename = row[0]

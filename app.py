@@ -15,15 +15,20 @@ from models.record import get_list_respone_json as record_get_list_respone_json
 from models.files import get_list_respone as files_get_list_respone
 from models.files import get_list_respone_json as files_get_list_respone_json
 from models.files import upload
+from models.files import edit_text
 from models.words import get_list_respone as words_get_list_respone
+from models.words import edit_words
+from models.words import get_words
 from models.sms import get_list_respone as sms_get_list_respone
 from models.sms import get_list_respone_json as sms_get_list_respone_json
+from models.home import main
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
-    return render_template('index.html')
+    respone = main()
+    return render_template('index.html', respone=respone)
 
 
 @app.route('/api/getmsg', methods=['GET'])
@@ -31,13 +36,14 @@ def get_voice():
     print("请求合成")
     text = request.args.get('text')
     select = request.args.get('select')
-    respone = api_process_return(text, select)
+    uid = '1111'
+    respone = api_process_return(text, select, uid)
     return jsonify(respone)
 
 
 @app.route('/api/localplay/<filename>', methods=['GET'])
 def get_local_play(filename):
-    path = f"cache/combined/{filename}"
+    path = f"data/combined/{filename}"
     return send_file(path, mimetype="audio/wav")
 
 
@@ -126,10 +132,30 @@ def admin_voices_upload():
     respone = upload(file)
     return jsonify(respone)
 
+@app.route('/admin/voices/edit', methods=['POST'])
+def admin_voices_edit():
+    data = request.get_json()
+    input_id = data.get('id')
+    input_text = data.get('edit_text')
+    respone = edit_text(input_id, input_text)
+    return jsonify(respone)
+
 @app.route('/admin/words', methods=['GET'])
 def admin_words():
     respone = words_get_list_respone()
     return render_template('words.html', respone=respone)
+
+@app.route('/admin/words/edit', methods=['POST'])
+def admin_words_edit():
+    data = request.get_json()
+    edit_text = data.get("text")
+    respone = edit_words(edit_text)
+    return jsonify(respone)
+
+@app.route('/admin/words/get', methods=['GET'])
+def admin_words_get():
+    respone = get_words()
+    return jsonify(respone)
 
 @app.route('/admin/sms', methods=['GET'])
 def admin_sms():

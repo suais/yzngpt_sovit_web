@@ -26,7 +26,7 @@
             </tr>
             {% for voice in respone.files%}
             <tr>
-                <td data-id="{{ voice.id }}">{{ voice.id }}</td>
+                <td data-id="{{ voice.id }}" class="td-fileid">{{ voice.id }}</td>
                 <td data-id="{{ voice.id }}">{{ voice.filename }}</td>
                 <td data-id="{{ voice.id }}">{{ voice.size }}(MB)</td>
                 <td data-id="{{ voice.id }}">{{ voice.lenght }}(s)</td>
@@ -155,13 +155,11 @@
                     morebutton.setAttribute('data-listener-added', true);
                     morebutton.addEventListener('click', function(e) {
                         console.log(e.target.dataset.id)
-
+                        select_dataset = e.target.dataset.id;
                         const td_text_element = document.querySelector(`[data-id="${e.target.dataset.id}"].truncate`);
-
                         document.getElementById("editModal").style.display = "block";
                         document.getElementById("edit-text").value = td_text_element.innerText;
 
-                        alert("点击编辑按钮")
                     });
                 }
             });   
@@ -255,6 +253,44 @@
             alert('文件上传失败');
           });
         }
+
+
+        document.getElementById("btn-edit_sumbit").addEventListener('click', function(e) {
+
+
+            const td_id_element = document.querySelector(`[data-id="${select_dataset}"].td-fileid`).innerText;
+            const edit_text = document.getElementById("edit-text").value;
+
+            fetch('/admin/voices/edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: td_id_element,
+                    edit_text: edit_text
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                const status = data.status;
+                if(status == "success"){
+                    document.getElementById("editModal").style.display = "none";
+                    alert("修改成功");
+                }
+                else{
+                    alert("修改失败，存在重复数据");
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("网络错误");
+            });
+            
+            document.getElementById("editModal").style.display = "none";
+        });
+
     </script>
 </body>
 </html>

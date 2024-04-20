@@ -56,3 +56,15 @@ class SMS(object):
         self.create_at = None
         self.msg = None
         self.phone = None
+
+class Home(object):
+    def __init__(self):
+        self.files = [] # 语音
+        self.models = [] # 模型
+        self.user = None
+
+class VoiceModel(object):
+    def __init__(self):
+        self.id = None
+        self.name = None
+        self.api = None

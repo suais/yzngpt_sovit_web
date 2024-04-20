@@ -44,6 +44,23 @@ def query_all_by_page(page=1):
         db_pool.release_connection(conn)
     return rows
 
+def query_all_by_id(id):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    SELECT * FROM {table_name}
+    WHERE id = ?;
+    """
+    try:
+        cursor.execute(sql, (id,))
+        rows = cursor.fetchall()
+    except Exception as e:
+        return []
+    finally:
+        db_pool.release_connection(conn)
+    return rows
+
 def query_all_by_filename(filename):
     db_pool = SQLitePool(SQLITE)
     conn = db_pool.get_connection()
@@ -115,12 +132,32 @@ def query_insert_voice(filename, size, length, create_at, id):
     db_pool = SQLitePool(SQLITE)
     conn = db_pool.get_connection()
     cursor = conn.cursor()
+    path = "data/voices/"
+    status = "1"
     sql = f"""
-    INSERT INTO {table_name} (filename, size, length, create_at, id)
+    INSERT INTO {table_name} (filename, size, length, create_at, id, path, status)
     VALUES (?, ?, ?, ?, ?)
     """
     try:
-        cursor.execute(sql, (filename, size, length, create_at, id))
+        cursor.execute(sql, (filename, size, length, create_at, id, path, status))
+        conn.commit()
+    except Exception as e:
+        return False
+    finally:
+        db_pool.release_connection(conn)
+    return True
+
+def query_update_voice(id, text):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    UPDATE {table_name}
+    SET text = ?
+    WHERE id = ?;
+    """
+    try:
+        cursor.execute(sql, (text, id))
         conn.commit()
     except Exception as e:
         return False
@@ -147,4 +184,10 @@ def upload(file):
             return {"status": "fail"}
     else:
         return {"status": "exist"}
-    
+
+def edit_text(id, text):
+    result = query_update_voice(id, text)
+    if result:
+        return {"status": "success"}
+    else:
+        return {"status": "fail"}

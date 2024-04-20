@@ -1,5 +1,6 @@
 import wave
 import os
+import re
 
 def get_wav_info(file_path):
     # 打开WAV文件
@@ -22,3 +23,14 @@ def get_file_size(file_path):
         return f"{size / 1024:.2f} KB"
     else:
         return f"{size / (1024 * 1024):.2f}"
+    
+    
+def check_words(text, words:list):
+    pattern = "|".join(words)
+    match = re.search(pattern, text)
+    if match:
+        print("检测到违禁词：", match.group())
+        return True
+    else:
+        print("未检测到违禁词")
+        return False
