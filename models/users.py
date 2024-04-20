@@ -95,6 +95,24 @@ def query_all_by_uid(uid):
         db_pool.release_connection(conn)
     return rows 
 
+def query_all_by_username_pwd(username, password):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    sql = f"""
+    SELECT * FROM {table_name}
+    WHERE username = ?
+    AND password = ?;
+    """
+    try:
+        cursor.execute(sql, (username, password))
+        rows = cursor.fetchall()
+    except Exception:
+        return []
+    finally:
+        db_pool.release_connection(conn)
+    return rows 
+
 def query_insert_user(uid, username, email, password, is_admin):
     db_pool = SQLitePool(SQLITE)
     conn = db_pool.get_connection()
@@ -216,3 +234,14 @@ def get_list_respone_json(page=1):
     }
     
     return json_data
+
+
+def user_auth(username, password):
+    result = query_all_by_username_pwd(username=username, password=password)
+    if result == []:
+        return False
+    else:
+        return True
+    
+def update_login(username, time):
+    pass

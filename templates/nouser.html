@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}">
+    <title>振南知波语音在线合成平台</title>
+</head>
+<body>
+
+    <h2>用户不存在或密码错误，</h2>
+    <h2>正在自动
+        <a href="/login">跳转</a>至登录页面
+    </h2>
+<script>
+    setTimeout(function() {
+        window.location.href = '/login'; 
+    }, 10000); 
+</script>
+</body>
+</html>

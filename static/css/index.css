@@ -14,7 +14,7 @@ body, html {
 
 .top-block{
     width: 100%;
-    height: 80px;
+    height: 70px;
     background-color: #497AF6;
     color: white;
     display: flex;
@@ -221,6 +221,13 @@ textarea {
 .account-logout {
     display: inline-block;
     color: #DEDEDE;
+    cursor: pointer;
+}
+
+.account-logout:hover {
+    display: inline-block;
+    color: #bcbcbc;
+    cursor: pointer;
 }
 
 .account-info-text-line {

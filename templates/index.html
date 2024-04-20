@@ -70,6 +70,12 @@
                                 <p class="info-title padd">文件大小:</p>
                                 <p class="info-result" id="file-size">暂无信息</p>
                             </div>
+
+                            <div class="info-item">
+                                <p class="info-title padd">描述文字:</p>
+                                <p class="info-result" id="file-size">暂无信息</p>
+                            </div>
+
                         </div>
                     </div>
 
@@ -85,7 +91,7 @@
                 <div class="account-area"> 
                     <div class="account-info">
                         <div class="account-title">账号信息</div>
-                        <div class="account-logout">退出登录</div>
+                        <div class="account-logout" onclick="logout()">退出登录</div>
                     </div>
 
                     <div class="account-info-text-line"> 
@@ -248,6 +254,14 @@
         }
 
         updateProgress(50); 
+
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        document.getElementById("sos").addEventListener("click", function() {
+            alert("给振南发送短信")
+        });
 
     </script>
 </body>
