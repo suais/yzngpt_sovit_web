@@ -42,23 +42,21 @@
         const userIdInput = document.getElementById("uid");
         const pwdInput = document.getElementById("pwd");
 
-        // Check if there are saved values in localStorage
         if(localStorage.getItem("remember") === "true") {
             rememberCheckbox.checked = true;
-            userIdInput.value = localStorage.getItem("uid");
-            pwdInput.value = localStorage.getItem("pwd");
+            userIdInput.value = localStorage.getItem("username");
+            pwdInput.value = localStorage.getItem("password");
         }
 
-        // Save values to localStorage when checkbox is checked
         rememberCheckbox.addEventListener("change", function() {
             if(this.checked) {
                 localStorage.setItem("remember", "true");
-                localStorage.setItem("uid", userIdInput.value);
-                localStorage.setItem("pwd", pwdInput.value);
+                localStorage.setItem("username", userIdInput.value);
+                localStorage.setItem("password", pwdInput.value);
             } else {
                 localStorage.removeItem("remember");
-                localStorage.removeItem("uid");
-                localStorage.removeItem("pwd");
+                localStorage.removeItem("username");
+                localStorage.removeItem("password");
             }
         });
     </script>

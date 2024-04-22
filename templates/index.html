@@ -159,7 +159,6 @@
             var selectparameter = '&select=' + get_sound_value; 
 
             if (text === '') {
-                // 弹窗提示
                 alert('输入框不能为空，请输入内容');
                 return ;
             }
@@ -196,8 +195,7 @@
                 var percentComplete = (event.loaded / event.total) * 100;
                 document.getElementById('progress').style.width = percentComplete + '%';
             } else {
-                // 如果无法获取总长度，则通过累加加载的数据大小来显示进度
-                var percentComplete = (event.loaded / (1024 * 1024)) * 100; // 假设单位是字节，这里将大小转换为MB
+                var percentComplete = (event.loaded / (1024 * 1024)) * 100;
                 document.getElementById('progress').style.width = percentComplete + '%';
             }
             };
@@ -207,7 +205,7 @@
 
         document.getElementById('server-play').addEventListener('click', function() {
             if (audio_path == ''){
-                alert("没有可以播放的音频文件");
+                alert("没有可播放的音频文件");
                 return 
             }
             var sound = '?sound=' + audio_path;
@@ -242,7 +240,6 @@
             });
             audio.load();
         });
-    
 
         function click_more_button(parentElement){
             var moreButtonsElement = parentElement.querySelectorAll('.btn-more'); 
@@ -267,18 +264,13 @@
             document.getElementById('text').value = text;
         });
 
-        // function updateProgress(percent) {
-        //    document.getElementById('progress').style.width = percent + '%';
-        // }
-
-        // updateProgress(50); 
 
         function logout() {
             window.location.href = '/logout';
         }
 
         document.getElementById("sos").addEventListener("click", function() {
-            alert("给振南发送短信")
+            alert("给振南发送短信，功能开发中")
         });
 
 
@@ -299,6 +291,7 @@
                 console.log("网络错误")
             });
         }
+        
         online();
         setInterval(online, 20000);
 
