@@ -1,3 +1,3 @@
-from models.users import query_all_by_username_uid
-result = query_all_by_username_uid('2小红1231232222', "10000")
+from models.record import get_today_record_count
+result = get_today_record_count("admin")
 print(result)

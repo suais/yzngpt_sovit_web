@@ -8,6 +8,7 @@ import datetime
 import uuid
 from models.files import query_all_by_id as query_all_by_id_files
 from models.record import query_insert_recoed
+from models.record import query_all_by_filename
 from models.utils import get_wav_info
 from models.utils import get_file_size
 from models.utils import check_words
@@ -54,11 +55,14 @@ def api_process_return(text, select_id, uid):
     words = words_list.split(",")
     check_result = check_words(text, words)
     formatted_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(check_result)
+
     if not check_result:
         data = {}
         data['msg'] = 'ok'
         data['data'] = ''
+        data['length'] = ''
+        data['size'] = ''
+        data['text'] = ''
         data['time'] = formatted_time
 
         voice_file_path = query_all_by_id_files(select_id)[0][7]
@@ -75,8 +79,15 @@ def api_process_return(text, select_id, uid):
         time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         id = str(uuid.uuid4())
         full_text = text + query_all_by_id_files(select_id)[0][3]
+        
         query_insert_recoed(sync_sound_name, length, size, full_text, uid, time, cache_combined_path, cache_gpt_path, gpt_sund_name, id)
+        
         if query_insert_recoed:
+            result = query_all_by_filename(sync_sound_name)
+            for row in result:
+                data['length'] = row[1]
+                data['size'] = row[2]
+                data['text'] = row[3]
             return data
     else:
         data = {}

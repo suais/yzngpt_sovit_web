@@ -1,9 +1,10 @@
+import uuid
 from .conn import SQLITE
 from .conn import SQLitePool
 from .respone_base import UsersRespone
 from .base import Users
-import uuid
-
+import datetime
+from models.utils import generate_uid
 
 table_name = "users"
 limit = 20
@@ -59,6 +60,7 @@ def query_all_by_username(username):
     finally:
         db_pool.release_connection(conn)
     return rows
+
 
 def query_all_by_username_uid(username, uid):
     db_pool = SQLitePool(SQLITE)
@@ -148,9 +150,28 @@ def query_update_user(uid, username, email, password):
         db_pool.release_connection(conn)
     return True
 
+def query_update_login_time(username):
+    db_pool = SQLitePool(SQLITE)
+    conn = db_pool.get_connection()
+    cursor = conn.cursor()
+    curret_time =datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sql = f"""
+    UPDATE {table_name}
+    SET last_login = ?
+    WHERE username = ?;
+    """
+    try:
+        cursor.execute(sql, (curret_time, username))
+        conn.commit()
+    except Exception as e:
+        return False
+    finally:
+        db_pool.release_connection(conn)
+    return True
+
 
 def new_user(username, email, password, is_admin):
-    uid = str(uuid.uuid4())
+    uid = generate_uid()
     is_uid_exist = query_all_by_uid(uid) == []
     is_username_exist = query_all_by_username(username) ==[]
     is_email_empty = email == ""
@@ -243,5 +264,29 @@ def user_auth(username, password):
     else:
         return True
     
-def update_login(username, time):
-    pass
+
+def api_user_info_json(username):
+    result = query_all_by_username(username)
+    data = {}
+    data['info'] = {}
+    if result != []:
+        for row in result:
+            data['info']['username'] = row[0]
+            data['info']['email'] = row[1]
+            data['info']['last_login'] = row[3]
+            data['info']['uid'] = row[4]
+        data['msg'] = 'ok'
+    else:
+         data['msg'] = 'filed'
+    return data
+    
+        
+def admin_auth(username):
+    result = query_all_by_username(username)
+    if result != []:
+        for row in result:
+            is_admin = row[6]
+    else:
+        is_admin = "0"
+    return is_admin
+    

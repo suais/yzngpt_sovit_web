@@ -1,6 +1,7 @@
 import wave
 import os
 import re
+import random
 
 def get_wav_info(file_path):
     # 打开WAV文件
@@ -34,3 +35,8 @@ def check_words(text, words:list):
     else:
         print("未检测到违禁词")
         return False
+    
+
+def generate_uid(length=8):
+    uid = ''.join(str(random.randint(0, 9)) for _ in range(length))
+    return uid

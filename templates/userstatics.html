@@ -18,10 +18,8 @@
             {% for user in respone.users %}
             <li>
                 <div class="item">
-                    <p data-id="{{user.uid}}">UID:{{user.uid}}</p>
                     <p data-id="{{user.uid}}">用户名:{{user.username}}</p>
-                    <p data-id="{{user.uid}}">登录时间:{{user.login_time}}</p>
-                    <p data-id="{{user.uid}}">在线时长:{{user.login_length}}</p>
+                    <p data-id="{{user.uid}}">刷新时间:{{user.time}}</p>
                 </div>
             </li>
             {% endfor %}

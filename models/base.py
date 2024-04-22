@@ -2,8 +2,7 @@ class UserOnline(object):
     def __init__(self):
         self.uid = None
         self.username = None
-        self.login_time = None
-        self.login_length = None
+        self.time = None
 
     
 
@@ -25,7 +24,7 @@ class Record(object):
         self.length = None
         self.size = None
         self.text = None
-        self.uid = None
+        self.username = None
         self.create_at = None
         self.path = None
         

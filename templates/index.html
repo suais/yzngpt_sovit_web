@@ -72,8 +72,7 @@
                             </div>
 
                             <div class="info-item">
-                                <p class="info-title padd">描述文字:</p>
-                                <p class="info-result" id="file-size">暂无信息</p>
+                                <p class="info-result truncate" id="file-text">暂无描述信息</p>
                             </div>
 
                         </div>
@@ -86,7 +85,7 @@
                 </div>
                 
                 </div>
-            </div>
+        </div>
             <div class="right">
                 <div class="account-area"> 
                     <div class="account-info">
@@ -97,19 +96,15 @@
                     <div class="account-info-text-line"> 
                         <div class="info-item">
                             <p class="info-title">UID:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-result" id="user-info-uid">暂无信息</p>
                         </div>
                         <div class="info-item">
                             <p class="info-title">用户名:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-result" id="user-info-username">暂无信息</p>
                         </div>
                         <div class="info-item">
-                            <p class="info-title">本次登录时间:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
-                        </div>
-                        <div class="info-item">
-                            <p class="info-title">在线时长:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-title">登录时间:</p>
+                            <p class="info-result" id="user-info-last-login">暂无信息</p>
                         </div>
                     </div>
                 </div>
@@ -122,15 +117,15 @@
                     <div class="statics-info-text-line"> 
                         <div class="info-item">
                             <p class="info-title">今日合成次数:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-result" id="combined-count">暂无信息</p>
                         </div>
                         <div class="info-item">
                             <p class="info-title">今日本地播放次数:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-result" id="file-localplay-count">暂无信息</p>
                         </div>
                         <div class="info-item">
                             <p class="info-title">今日远程播放次数:</p>
-                            <p class="info-result" id="file-size">暂无信息</p>
+                            <p class="info-result" id="file-serverplay-count">暂无信息</p>
                         </div>
                     </div>
                 </div>
@@ -143,8 +138,8 @@
 
                     <div class="reminder-info-text-line"> 
                         <div class="info-item">
-                            <p class="info-title">2024年13日21时19分:</p>
-                            <p class="info-result" id="file-size">暂无信息234234234</p>
+                            <p class="info-title">无</p>
+                            <p class="info-result" id="file-size">无</p>
                         </div>
                     </div>
                 </div>
@@ -178,13 +173,16 @@
                         if (xhr.status >= 200 && xhr.status < 300) {
                             var response = JSON.parse(xhr.responseText);
                             audio_path = response.data;
-                            audio_time = response.time;
-                            document.getElementById("file-name-result").innerText = audio_path;
-                            document.getElementById("file-time-result").innerText = audio_time;
+                            document.getElementById("file-name-result").innerText = response.data;
+                            document.getElementById("file-time-result").innerText = response.time;
+                            document.getElementById("file-length").innerText = response.length + "(s)";
+                            document.getElementById("file-size").innerText = response.size + "(M)";
+                            document.getElementById("file-text").innerText = response.text;
                             if (response.msg == "含有违禁词"){
                                 alert("检测到含有违禁词")
                             } else {
-                                console.log("合成完成")
+                                console.log("合成完成");
+                                get_combined_info();
                             };
                         }
                     } else {
@@ -192,10 +190,26 @@
                     }
                 }
             };
+
+            xhr.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = (event.loaded / event.total) * 100;
+                document.getElementById('progress').style.width = percentComplete + '%';
+            } else {
+                // 如果无法获取总长度，则通过累加加载的数据大小来显示进度
+                var percentComplete = (event.loaded / (1024 * 1024)) * 100; // 假设单位是字节，这里将大小转换为MB
+                document.getElementById('progress').style.width = percentComplete + '%';
+            }
+            };
+
             xhr.send();
         });
 
         document.getElementById('server-play').addEventListener('click', function() {
+            if (audio_path == ''){
+                alert("没有可以播放的音频文件");
+                return 
+            }
             var sound = '?sound=' + audio_path;
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/serverplay' + sound, true);
@@ -218,6 +232,10 @@
 
 
         document.getElementById('local-play').addEventListener('click', function() {
+            if (audio_path == ''){
+                alert("没有可以播放的音频文件");
+                return 
+            }
             var audio = new Audio('/api/localplay' + '/' + audio_path);
             audio.addEventListener('canplaythrough', function() {
                 audio.play();
@@ -249,11 +267,11 @@
             document.getElementById('text').value = text;
         });
 
-        function updateProgress(percent) {
-            document.getElementById('progress').style.width = percent + '%';
-        }
+        // function updateProgress(percent) {
+        //    document.getElementById('progress').style.width = percent + '%';
+        // }
 
-        updateProgress(50); 
+        // updateProgress(50); 
 
         function logout() {
             window.location.href = '/logout';
@@ -262,6 +280,78 @@
         document.getElementById("sos").addEventListener("click", function() {
             alert("给振南发送短信")
         });
+
+
+        function online(){
+            fetch('/api/online', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                const msg = data.msg;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                console.log("网络错误")
+            });
+        }
+        online();
+        setInterval(online, 20000);
+
+        function get_user_info(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/userinfo/get', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        console.log(xhr.responseText);
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            var response = JSON.parse(xhr.responseText);
+                            if(response.msg == 'ok'){
+                                console.log('获取用户信息成功');
+                                document.getElementById("user-info-username").innerText = response.info.username;
+                                document.getElementById("user-info-uid").innerText = response.info.uid;
+                                document.getElementById("user-info-last-login").innerText = response.info.last_login;
+                            }
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+
+        get_user_info();
+
+        function get_combined_info(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/combined/count/get', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        console.log(xhr.responseText);
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            var response = JSON.parse(xhr.responseText);
+                            if(response.msg == 'ok'){
+                                console.log('获取用户信息成功');
+                                document.getElementById("combined-count").innerText = response.count;
+                            }
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        get_combined_info();
 
     </script>
 </body>

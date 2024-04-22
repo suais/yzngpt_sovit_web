@@ -4,8 +4,6 @@ from models.base import File
 from models.base import VoiceModel
 from models.voice_models import query_all as models_query_all
 
-
-
 def main():
     home = Home()
     files_rows = query_all()
@@ -22,6 +20,7 @@ def main():
         home.files.append(file)
     
     voice_models = models_query_all()
+    
     for row in voice_models:
         voice_model = VoiceModel()
         voice_model.id = row[0]
