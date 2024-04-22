@@ -165,7 +165,6 @@
             });   
         }
 
-
         document.getElementById("edit-text").addEventListener('change', function(e) {
             document.getElementById("edit-text").value = e.target.value;
         });
@@ -174,7 +173,6 @@
         document.getElementById("btn-editclose").addEventListener('click', function(e) {
             document.getElementById("editModal").style.display = "none";
         });
-
 
         var parentElement = document.getElementById('voicetable');
         click_more_button(parentElement);
@@ -190,30 +188,24 @@
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         
-        // 防止拖动文件在浏览器中打开
         dropZone.addEventListener('dragover', (event) => {
           event.preventDefault();
         });
         
-        // 处理拖放事件
         dropZone.addEventListener('drop', (event) => {
           event.preventDefault();
           handleFiles(event.dataTransfer.files);
         });
         
-        // 处理点击上传事件
         dropZone.addEventListener('click', () => {
           fileInput.click();
         });
         
-        // 监听文件选择事件
         fileInput.addEventListener('change', (event) => {
           handleFiles(event.target.files);
         });
         
-        // 处理上传的文件
         function handleFiles(files) {
-            // 检查文件是否符合要求
             const validTypes = ['.wav'];
             for (const file of files) {
               const fileName = file.name.toLowerCase();
@@ -224,40 +216,36 @@
               }
             }
         
-          // 创建 FormData 实例
-          const formData = new FormData();
-          for (const file of files) {
-            formData.append('file', file);
-          }
-        
-          // 发送 POST 请求上传文件
-          fetch('/admin/voices/upload', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            document.getElementById("myModal").style.display = "none";
-
-            if (data.status == "success") {
-                alert('文件上传成功');
-            } else if (data.status == "fail") {
-                alert('文件上传失败');
-            } else if (data.status == "exist") {
-                alert('文件已存在');
+            const formData = new FormData();
+            for (const file of files) {
+                formData.append('file', file);
             }
-          })
-          .catch(error => {
-            console.error(error);
-            alert('文件上传失败');
-          });
+        
+            fetch('/admin/voices/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById("myModal").style.display = "none";
+
+                if (data.status == "success") {
+                    alert('文件上传成功');
+                } else if (data.status == "fail") {
+                    alert('文件上传失败');
+                } else if (data.status == "exist") {
+                    alert('文件已存在');
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('文件上传失败');
+            });
         }
 
 
         document.getElementById("btn-edit_sumbit").addEventListener('click', function(e) {
-
-
             const td_id_element = document.querySelector(`[data-id="${select_dataset}"].td-fileid`).innerText;
             const edit_text = document.getElementById("edit-text").value;
 
@@ -287,7 +275,6 @@
                 console.error('Error:', error);
                 alert("网络错误");
             });
-            
             document.getElementById("editModal").style.display = "none";
         });
 
