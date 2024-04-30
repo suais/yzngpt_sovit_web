@@ -1,3 +1,3 @@
-from models.record import get_today_record_count
-result = get_today_record_count("admin")
+from models.aliyunsms import smss
+result = smss()
 print(result)

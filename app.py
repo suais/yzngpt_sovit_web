@@ -30,7 +30,11 @@ from models.words import edit_words
 from models.words import get_words
 from models.sms import get_list_respone as sms_get_list_respone
 from models.sms import get_list_respone_json as sms_get_list_respone_json
+from models.sms import send_smss
 from models.home import main
+from loguru import logger
+
+logger.add("logs/log.log", rotation="00:00", retention="7 days")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'zm239238kj8234jkfjisui'
@@ -39,6 +43,7 @@ app.config['SECRET_KEY'] = 'zm239238kj8234jkfjisui'
 def home():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         respone = main()
@@ -52,6 +57,7 @@ def home():
 def login_auth():
     input_username = request.args.get('username')
     input_password = request.args.get('password')
+    logger.info(f"{input_username}: /login/auth")
     auth = user_auth(str(input_username), str(input_password))
     usertype = admin_auth(input_username)
     if auth:
@@ -73,6 +79,7 @@ def login():
 def logout():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /logout")
     session.clear()
     return redirect(url_for('login'))
 
@@ -83,6 +90,7 @@ def get_voice():
     select = request.args.get('select')
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/getmsg")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         respone = api_process_return(text, select, session_username)
@@ -97,6 +105,7 @@ def get_voice():
 def get_local_play(filename):
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/localplay/{filename}")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         path = f"data/combined/{filename}"
@@ -112,6 +121,7 @@ def get_local_play(filename):
 def server_play():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/serverplay")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         play = request.args.get('sound')
@@ -128,6 +138,7 @@ def server_play():
 def api_online():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/online")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         respone = online(session_username)
@@ -143,6 +154,7 @@ def api_online():
 def api_user_info():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/userinfo/get")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         respone = api_user_info_json(session_username)
@@ -158,9 +170,25 @@ def api_user_info():
 def api_combined_count():
     session_username = session.get('username')
     session_password = session.get('password')
+    logger.info(f"{session_username}: /api/combined/count/get")
     auth = user_auth(str(session_username), str(session_password))
     if auth:
         respone = get_today_record_count(session_username)
+        return jsonify(respone)
+    else:
+        session.clear()
+        data = {}
+        data['msg'] = 'not login'
+        return jsonify(data)
+
+@app.route('/api/sendsms', methods=['GET'])
+def api_sendsms():
+    session_username = session.get('username')
+    session_password = session.get('password')
+    logger.info(f"{session_username}: /api/sendsms")
+    auth = user_auth(str(session_username), str(session_password))
+    if auth:
+        respone = send_smss()
         return jsonify(respone)
     else:
         session.clear()
@@ -174,6 +202,7 @@ def admin_home():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         return render_template('admin.html')
@@ -187,6 +216,7 @@ def admin_user_statics():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/userstatics")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         respone = userstatics_respone()
@@ -201,6 +231,7 @@ def admin_users():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/users")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = 1
@@ -216,6 +247,7 @@ def admin_users_new():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/users/new")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         data = request.get_json()
@@ -236,6 +268,7 @@ def admin_users_edit():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/users/edit")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         data = request.get_json()
@@ -257,6 +290,7 @@ def admin_users_page():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/users/page")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = request.args.get('page')
@@ -273,6 +307,7 @@ def admin_record():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/record")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = 1
@@ -288,6 +323,7 @@ def admin_record_page():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/record/page")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = request.args.get('page')
@@ -305,6 +341,7 @@ def admin_voices():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/voices")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = 1
@@ -320,6 +357,7 @@ def admin_voices_page():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/voices/page")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = request.args.get('page')
@@ -337,6 +375,7 @@ def admin_voices_upload():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/voices/upload")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         file = request.files['file']
@@ -354,6 +393,7 @@ def admin_voices_edit():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/voices/edit")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         data = request.get_json()
@@ -373,6 +413,7 @@ def admin_words():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/words")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         respone = words_get_list_respone()
@@ -387,6 +428,7 @@ def admin_words_edit():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/words/edit")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         data = request.get_json()
@@ -405,6 +447,7 @@ def admin_words_get():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/words/get")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         respone = get_words()
@@ -416,6 +459,7 @@ def admin_sms():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/sms")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = 1
@@ -433,6 +477,7 @@ def admin_sms_page():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype = session.get('usertype')
+    logger.info(f"{session_username}: /admin/sms/page")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         page = request.args.get('page')
@@ -448,6 +493,7 @@ def admin_logs():
     session_username = session.get('username')
     session_password = session.get('password')
     session_usertype  =  session.get('usertype')
+    logger.info(f"{session_username}: /admin/logs")
     auth = user_auth(str(session_username), str(session_password))
     if auth and session_usertype=="1":
         respone = None

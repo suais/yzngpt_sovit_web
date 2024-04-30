@@ -34,11 +34,8 @@ def get_gpt_sovits(text):
         gpt_name_all = f'{cache_gpt_path}{gpt_name}{file_format}'
         with open(gpt_name_all, 'wb') as f:
             f.write(response.content)
-            print('文件下载完成')
         return gpt_name
     else:
-        print(response.status_code)
-        print('文件下载失败')
         return None
 
 def sync_sound(gpt_file, ori_file):

@@ -43,7 +43,6 @@ def query_all_by_page(page=1):
         db_pool.release_connection(conn)
     return rows
 
-
 def query_all_by_username(username):
     db_pool = SQLitePool(SQLITE)
     conn = db_pool.get_connection()
@@ -60,7 +59,6 @@ def query_all_by_username(username):
     finally:
         db_pool.release_connection(conn)
     return rows
-
 
 def query_all_by_username_uid(username, uid):
     db_pool = SQLitePool(SQLITE)
@@ -169,7 +167,6 @@ def query_update_login_time(username):
         db_pool.release_connection(conn)
     return True
 
-
 def new_user(username, email, password, is_admin):
     uid = generate_uid()
     is_uid_exist = query_all_by_uid(uid) == []
@@ -186,7 +183,6 @@ def new_user(username, email, password, is_admin):
 
 def edit_user(uid, username, email, password):
     is_username_exist_self = query_all_by_username_uid(username, uid) == []
-    print(is_username_exist_self)
     if not is_username_exist_self:
         query_update_user(uid, username, email, password)
         return True
@@ -253,7 +249,6 @@ def get_list_respone_json(page=1):
         "total_page": total_page,
         "localtion_page": localtion_page
     }
-    
     return json_data
 
 
@@ -263,7 +258,7 @@ def user_auth(username, password):
         return False
     else:
         return True
-    
+
 
 def api_user_info_json(username):
     result = query_all_by_username(username)

@@ -2,6 +2,7 @@ from .conn import SQLITE
 from .conn import SQLitePool
 from .respone_base import SMSRespone
 from .base import SMS
+from models.aliyunsms import send_sms
 
 
 table_name = "sms_msgs"
@@ -83,3 +84,9 @@ def get_list_respone_json(page=1):
     }
     
     return data_json
+
+def send_smss():
+    send_sms()
+    data = {}
+    data['msg'] = 'ok'
+    return data

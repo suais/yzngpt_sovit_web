@@ -58,8 +58,8 @@ class SMS(object):
 
 class Home(object):
     def __init__(self):
-        self.files = [] # 语音
-        self.models = [] # 模型
+        self.files = []
+        self.models = []
         self.user = None
 
 class VoiceModel(object):

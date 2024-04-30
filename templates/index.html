@@ -139,7 +139,7 @@
                     <div class="reminder-info-text-line"> 
                         <div class="info-item">
                             <p class="info-title">无</p>
-                            <p class="info-result" id="file-size">无</p>
+                            <p class="info-result" id="message-text">无</p>
                         </div>
                     </div>
                 </div>
@@ -148,10 +148,19 @@
         </div>
 
         <div class="bottom-block"></div>
+
+        <div class="popup-container" id="popup-container" onclick="closePopup()">
+            <div id="popup" class="popup">
+                <span class="close" onclick="closePopup()">&times;</span>
+                <p>已经超过3分钟没有互动，请互动！</p>
+            </div>
+        </div>
+
     
     </div>
     <script> 
         var audio_path = '';
+        var last_click_time = new Date();
         document.getElementById('btn-getvoice').addEventListener('click', function() {
             var get_sound_value = document.getElementById('sound').value;
             var text = document.getElementById('text').value;
@@ -170,6 +179,7 @@
                     if (xhr.status == 200) {
                         console.log(xhr.responseText);
                         if (xhr.status >= 200 && xhr.status < 300) {
+                            last_click_time = new Date();
                             var response = JSON.parse(xhr.responseText);
                             audio_path = response.data;
                             document.getElementById("file-name-result").innerText = response.data;
@@ -270,7 +280,25 @@
         }
 
         document.getElementById("sos").addEventListener("click", function() {
-            alert("给振南发送短信，功能开发中")
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/sendsms', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        console.log(xhr.responseText);
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            var response = JSON.parse(xhr.responseText);
+                            if(response.msg == 'ok'){
+                                alert("发送短信成功");
+                            }
+                        }
+                    } else {
+                        console.log('请求失败');
+                    }
+                }
+            };
+            xhr.send();
+
         });
 
 
@@ -345,6 +373,31 @@
         }
 
         get_combined_info();
+
+        function time_diff(){
+            var currentTime = new Date();
+            var timeDifference = currentTime - last_click_time;
+            var timeDifferenceInMinutes = timeDifference / (1000 * 60);
+            if (timeDifferenceInMinutes > 3) {
+                document.getElementById("message-text").innerText = "已经超过3分钟没有互动，请互动！"
+                showPopup();
+                console.log("提醒弹窗");
+            }
+            
+        }
+
+        function showPopup() {
+            var popup = document.getElementById("popup-container");
+            popup.style.display = "block";
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("popup-container");
+            popup.style.display = "none";
+        }
+
+        setInterval(time_diff, 3000);
+        
 
     </script>
 </body>
